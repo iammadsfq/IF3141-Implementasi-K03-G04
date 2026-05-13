@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+<t t-name="referral_dashboard.SaldoPoin" owl="1">
+<div class="saldo-page">
+
+    <!-- Toast -->
+    <div t-if="state.showToast"
+        t-att-class="'saldo-toast ' + (state.toastSuccess ? 'saldo-toast-success' : 'saldo-toast-error')">
+        <t t-if="state.toastSuccess">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="20 6 9 17 4 12"/>
+            </svg>
+        </t>
+        <t t-else="">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18"/>
+                <line x1="6" y1="6" x2="18" y2="18"/>
+            </svg>
+        </t>
+        <span t-esc="state.toastMessage"/>
+    </div>
+
+    <div class="saldo-inner">
+
+        <!-- Header -->
+        <header style="display:flex; align-items:center; gap:12px; margin-bottom:28px;">
+            <h1 style="font-size:17px; font-weight:600; letter-spacing:-0.01em; color:#1A1A1A; margin:0;">
+                Saldo Poin Saya
+            </h1>
+        </header>
+
+        <!-- Main card -->
+        <section class="saldo-card" aria-label="Kartu saldo poin">
+            <div class="saldo-noise"/>
+            <div style="position:relative;">
+
+                <!-- Top row -->
+                <div style="display:flex; align-items:flex-start; justify-content:space-between;">
+                    <div>
+                        <p style="font-size:10px; font-weight:600; letter-spacing:0.18em; color:#D4A843; margin:0;">MEMBER</p>
+                        <p style="margin-top:6px; font-size:20px; font-weight:600; line-height:1.2; margin-bottom:0;" t-esc="member.name"/>
+                    </div>
+                    <div style="display:grid; place-items:center; height:44px; width:44px; border-radius:999px; background-color:#1c3a28; border:1px solid #D4A843;">
+                        <span style="color:#D4A843; font-size:14px; font-weight:600; letter-spacing:0.05em;" t-esc="member.initials"/>
+                    </div>
+                </div>
+
+                <div class="saldo-divider"/>
+
+                <!-- Points -->
+                <div style="text-align:center;">
+                    <p class="saldo-label">SALDO POIN</p>
+                    <div style="margin-top:8px; display:flex; align-items:baseline; justify-content:center; gap:8px;">
+                        <span class="saldo-points-num" t-esc="formattedPoints"/>
+                        <span style="font-family:'Outfit',system-ui,sans-serif; font-size:18px; font-weight:500; color:rgba(255,255,255,0.85);">poin</span>
+                    </div>
+                    <div class="saldo-referral-badge">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#D4A843" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                            <circle cx="9" cy="7" r="4"/>
+                            <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                            <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                        </svg>
+                        <span><t t-esc="member.referrals"/> referral berhasil</span>
+                    </div>
+                </div>
+
+                <div class="saldo-divider"/>
+
+                <!-- Referral code -->
+                <div>
+                    <p class="saldo-label">KODE REFERRAL</p>
+                    <div class="saldo-code-box">
+                        <span style="font-family:monospace; font-weight:700; letter-spacing:0.18em; color:#fff; font-size:18px;" t-esc="member.code"/>
+                        <button class="saldo-copy-btn" t-on-click="copyCode" aria-label="Salin kode">
+                            <t t-if="state.copied">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#D4A843" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                    <polyline points="20 6 9 17 4 12"/>
+                                </svg>
+                            </t>
+                            <t t-else="">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+                                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+                                </svg>
+                            </t>
+                        </button>
+                    </div>
+                    <p style="margin-top:10px; font-size:12px; color:rgba(255,255,255,0.65);">
+                        Bagikan kode ini ke teman untuk mendapatkan poin
+                    </p>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- Footnote -->
+        <div style="margin-top:20px; display:flex; align-items:flex-start; gap:8px; padding:0 4px;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#D4A843" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-top:2px; flex-shrink:0;">
+                <circle cx="12" cy="12" r="10"/>
+                <line x1="12" y1="8" x2="12" y2="12"/>
+                <line x1="12" y1="16" x2="12.01" y2="16"/>
+            </svg>
+            <p style="font-size:12px; line-height:1.6; color:#6B6B5E; margin:0;">
+                Poin terakumulasi otomatis saat teman yang menggunakan kode referral Anda bertransaksi.
+            </p>
+        </div>
+
+    </div>
+</div>
+</t>
+
+</templates>

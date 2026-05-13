@@ -7,7 +7,7 @@
     'data': [
         'security/ir.model.access.csv',
         'views/dashboard_action.xml',
-        'views/referral_policy_views.xml', 
+        'views/referral_policy_views.xml',
     ],
     'assets': {
         'web.assets_backend': [
