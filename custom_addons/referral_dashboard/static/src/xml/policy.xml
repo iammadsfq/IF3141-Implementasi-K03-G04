@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    
+    <t t-name="referral_dashboard.PolicyTemplate" owl="1">
+        <div class="p-4" style="background-color: #F6F6F4; min-height: 100vh; font-family: sans-serif;">
+            
+            <div t-if="state.showSuccess" class="alert alert-dismissible fade show d-flex align-items-center rounded-3 mb-4 shadow-sm" role="alert" style="background-color: #C8E6C9; border-color: #A5D6A7; color: #2E7D32;">
+                <i class="fa fa-check-circle me-3 fs-4"></i>
+                <div>
+                    <strong class="d-block mb-1">Perubahan Tersimpan</strong>
+                    <small>Kebijakan referral berhasil diperbarui dan telah diaktifkan untuk semua pengguna.</small>
+                </div>
+                <button type="button" class="btn-close" t-on-click="() => state.showSuccess = false" aria-label="Close"></button>
+            </div>
+
+            <div t-if="state.showError" class="alert alert-danger d-flex align-items-center rounded-3 mb-4 shadow-sm" role="alert">
+                <i class="fa fa-exclamation-triangle me-3 fs-4"></i>
+                <span t-esc="state.errorMessage"/>
+            </div>
+
+            <div class="mb-4">
+                <h2 style="color: #4E342E; font-weight: bold; font-family: serif;">Kelola Kebijakan Referral</h2>
+                <p class="text-muted" style="max-width: 600px;">Sesuaikan parameter program referral untuk menjaga keseimbangan antara akuisisi pelanggan dan profitabilitas.</p>
+            </div>
+
+            <div class="row">
+                <div class="col-lg-7 mb-4">
+                    <div class="card border-0 shadow-sm rounded-4">
+                        <div class="card-body p-4 p-md-5">
+                            <h5 class="fw-bold mb-4 d-flex align-items-center border-bottom pb-3">
+                                <span class="bg-light rounded-circle p-2 me-3"><i class="fa fa-sliders text-dark"></i></span>
+                                Parameter Aturan
+                            </h5>
+                            
+                            <div class="mb-4">
+                                <label class="form-label fw-bold text-dark">Poin per Referral</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light border-end-0"><i class="fa fa-dot-circle-o text-secondary"></i></span>
+                                    <input type="number" class="form-control border-start-0 bg-light" t-model="state.pointPerReferral" min="0"/>
+                                </div>
+                                <div class="form-text mt-2 text-muted" style="font-size: 0.85rem;">Jumlah poin Nomar yang diberikan kepada referrer saat teman mereka menyelesaikan transaksi pertama.</div>
+                            </div>
+
+                            <div class="mb-5">
+                                <label class="form-label fw-bold text-dark">Max Point Monthly</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light border-end-0"><i class="fa fa-calendar text-secondary"></i></span>
+                                    <input type="number" class="form-control border-start-0 bg-light" t-model="state.maxPointMonthly" min="0"/>
+                                </div>
+                                <div class="form-text mt-2 text-muted" style="font-size: 0.85rem;">Batas maksimal poin yang dapat dikumpulkan oleh satu akun dari program referral dalam periode satu bulan.</div>
+                            </div>
+
+                            <hr class="mb-4"/>
+
+                            <div class="d-flex justify-content-end gap-3 mt-3">
+                                <button class="btn bg-white border fw-bold" t-on-click="cancel" style="color: #5D4037;">Batal</button>
+                                <button class="btn fw-bold text-white px-4" t-on-click="savePolicy" style="background-color: #385E48;">
+                                    <i class="fa fa-save me-2"></i> Simpan
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-5">
+                    <div class="card border-0 shadow-sm rounded-4 mb-4 overflow-hidden text-white" style="background-color: #2b2b2b;">
+                        <div class="p-4 d-flex flex-column justify-content-end" style="background-image: linear-gradient(to top, rgba(0,0,0,0.8), rgba(0,0,0,0.1)), url('https://images.unsplash.com/photo-1559525839-b184a4d698c7?auto=format&amp;fit=crop&amp;w=800&amp;q=80'); background-size: cover; background-position: center; height: 180px;">
+                            <div>
+                                <span class="badge mb-2 px-3 py-2" style="background-color: #406A58;">PANDUAN</span>
+                                <h4 class="fw-bold mb-0" style="font-family: serif; color: #fff">Keseimbangan Ekonomi</h4>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card border-0 shadow-sm rounded-4" style="background-color: #FCFCFA;">
+                        <div class="card-body p-4">
+                            <h6 class="fw-bold text-uppercase mb-3" style="color: #4E342E; font-size: 0.85rem; letter-spacing: 0.5px;">
+                                <i class="fa fa-info-circle me-2" style="color: #385E48;"></i> Catatan Administratif
+                            </h6>
+                            <ul class="text-muted ps-3 mb-0" style="font-size: 0.9rem; line-height: 1.7;">
+                                <li class="mb-3">Perubahan poin per referral akan berlaku untuk <strong>referral baru</strong> yang terjadi setelah tombol simpan ditekan. Referral yang sedang dalam proses akan menggunakan rate lama.</li>
+                                <li>Batas poin bulanan (Max Point Monthly) di-reset pada tanggal 1 setiap bulannya pada pukul 00:00 WIB.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </t>
+
+</templates>
