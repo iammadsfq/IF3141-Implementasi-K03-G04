@@ -23,7 +23,11 @@
                 <p class="text-muted" style="max-width: 600px;">Sesuaikan parameter program referral untuk menjaga keseimbangan antara akuisisi pelanggan dan profitabilitas.</p>
             </div>
 
-            <div class="row">
+            <div t-if="state.isLoading" class="alert alert-info rounded-3 shadow-sm">
+                Memuat kebijakan aktif...
+            </div>
+
+            <div class="row" t-if="!state.isLoading">
                 <div class="col-lg-7 mb-4">
                     <div class="card border-0 shadow-sm rounded-4">
                         <div class="card-body p-4 p-md-5">
@@ -53,9 +57,11 @@
                             <hr class="mb-4"/>
 
                             <div class="d-flex justify-content-end gap-3 mt-3">
-                                <button class="btn bg-white border fw-bold" t-on-click="cancel" style="color: #5D4037;">Batal</button>
-                                <button class="btn fw-bold text-white px-4" t-on-click="savePolicy" style="background-color: #385E48;">
-                                    <i class="fa fa-save me-2"></i> Simpan
+                                <button class="btn bg-white border fw-bold" t-on-click="cancel" t-att-disabled="state.isSaving" style="color: #5D4037;">Batal</button>
+                                <button class="btn fw-bold text-white px-4" t-on-click="savePolicy" t-att-disabled="state.isSaving" style="background-color: #385E48;">
+                                    <i class="fa fa-save me-2"></i>
+                                    <t t-if="state.isSaving">Menyimpan...</t>
+                                    <t t-else="">Simpan</t>
                                 </button>
                             </div>
                         </div>

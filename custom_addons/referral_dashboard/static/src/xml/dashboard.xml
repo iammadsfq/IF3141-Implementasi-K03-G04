@@ -3,14 +3,30 @@
     
     <t t-name="referral_dashboard.DashboardTemplate" owl="1">
         <div class="o_referral_dashboard p-4" style="background-color: #f9f9f9; min-height: 100vh;">
-            <h2 class="mb-4 text-primary"><i class="fa fa-line-chart me-2"/> Dashboard Analitik Referral</h2>
+            <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4">
+                <h2 class="m-0 text-primary"><i class="fa fa-line-chart me-2"/> Dashboard Analitik Referral</h2>
+                <div class="btn-group" role="group" aria-label="Filter periode dashboard">
+                    <button t-att-class="'btn btn-sm ' + (state.period === 'week' ? 'btn-primary' : 'btn-outline-primary')" t-on-click="() => this.setPeriod('week')">Minggu Ini</button>
+                    <button t-att-class="'btn btn-sm ' + (state.period === 'month' ? 'btn-primary' : 'btn-outline-primary')" t-on-click="() => this.setPeriod('month')">Bulan Ini</button>
+                    <button t-att-class="'btn btn-sm ' + (state.period === 'year' ? 'btn-primary' : 'btn-outline-primary')" t-on-click="() => this.setPeriod('year')">Tahun Ini</button>
+                    <button t-att-class="'btn btn-sm ' + (state.period === 'all' ? 'btn-primary' : 'btn-outline-primary')" t-on-click="() => this.setPeriod('all')">Semua</button>
+                </div>
+            </div>
+
+            <div t-if="state.errorMessage" class="alert alert-danger" role="alert">
+                <t t-esc="state.errorMessage"/>
+            </div>
+
+            <div t-if="state.isLoading" class="alert alert-info" role="alert">
+                Memuat data dashboard...
+            </div>
             
-            <div class="row mb-4">
+            <div class="row mb-4" t-if="!state.isLoading">
                 <div class="col-md-4">
                     <div class="card text-white bg-primary shadow-sm mb-3">
                         <div class="card-body">
                             <h6 class="card-title text-uppercase fw-bold"><i class="fa fa-users me-2"/> Total Jumlah Referral</h6>
-                            <h1 class="card-text display-5 fw-bold" t-esc="kpiData.totalReferrals"/>
+                            <h1 class="card-text display-5 fw-bold" t-esc="state.kpiData.totalReferrals"/>
                         </div>
                     </div>
                 </div>
@@ -18,7 +34,7 @@
                     <div class="card text-white bg-success shadow-sm mb-3">
                         <div class="card-body">
                             <h6 class="card-title text-uppercase fw-bold"><i class="fa fa-money me-2"/> Total Pendapatan Referral</h6>
-                            <h1 class="card-text display-5 fw-bold" t-esc="kpiData.totalRevenue"/>
+                            <h1 class="card-text display-5 fw-bold" t-esc="state.kpiData.totalRevenue"/>
                         </div>
                     </div>
                 </div>
@@ -26,13 +42,13 @@
                     <div class="card text-dark bg-warning shadow-sm mb-3">
                         <div class="card-body">
                             <h6 class="card-title text-uppercase fw-bold"><i class="fa fa-star me-2"/> Total Poin Dikeluarkan</h6>
-                            <h1 class="card-text display-5 fw-bold" t-esc="kpiData.totalPoints"/>
+                            <h1 class="card-text display-5 fw-bold" t-esc="state.kpiData.totalPoints"/>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div class="card shadow-sm">
+            <div class="card shadow-sm" t-if="!state.isLoading">
                 <div class="card-header bg-white py-3">
                     <h4 class="m-0 font-weight-bold text-dark"><i class="fa fa-trophy text-warning me-2"/> Top Referrer</h4>
                 </div>
@@ -48,7 +64,10 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <t t-foreach="topReferrers" t-as="referrer" t-key="referrer.id">
+                                <tr t-if="!state.topReferrers.length">
+                                    <td colspan="4" class="text-center text-muted py-4">Belum ada transaksi referral pada periode ini.</td>
+                                </tr>
+                                <t t-foreach="state.topReferrers" t-as="referrer" t-key="referrer.id">
                                     <tr>
                                         <td class="px-4 fw-bold">#<t t-esc="referrer_index + 1"/></td>
                                         <td t-esc="referrer.name"/>

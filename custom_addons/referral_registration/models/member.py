@@ -12,12 +12,17 @@ class ReferralMember(models.Model):
     _order = "create_date desc"
     _REFERRAL_CODE_PATTERN = re.compile(r"^[A-Z0-9]{6}$")
 
+    active = fields.Boolean(default=True)
     name = fields.Char(required=True)
     phone_number = fields.Char(required=True)
     referral_code = fields.Char(readonly=True, copy=False, index=True)
-    point = fields.Integer(default=0)
+    point = fields.Integer(default=0, string="Saldo Poin")
     referred_by_id = fields.Many2one("referral.member", string="Referred By", ondelete="set null")
     referred_member_ids = fields.One2many("referral.member", "referred_by_id", string="Referred Members")
+    referred_member_count = fields.Integer(
+        string="Jumlah Member Direferensikan",
+        compute="_compute_referral_summary",
+    )
 
     _sql_constraints = [
         ("referral_member_referral_code_unique", "unique(referral_code)", "Kode referral harus unik."),
@@ -53,6 +58,10 @@ class ReferralMember(models.Model):
         for member in self:
             member.point += int(points or 0)
         return True
+
+    def _compute_referral_summary(self):
+        for member in self:
+            member.referred_member_count = len(member.referred_member_ids)
 
     @api.model
     def _sanitize_text(self, value):
@@ -110,6 +119,4 @@ class ReferralMember(models.Model):
             values["referred_by_id"] = referrer.id
 
         new_member = self.create(values)
-        if referrer:
-            referrer.computePoints(1)
         return new_member
