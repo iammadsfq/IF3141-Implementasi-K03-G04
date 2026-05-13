@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_referral_member_tree" model="ir.ui.view">
+        <field name="name">referral.member.tree</field>
+        <field name="model">referral.member</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="phone_number"/>
+                <field name="referral_code"/>
+                <field name="referred_by_id"/>
+                <field name="point"/>
+                <field name="create_date"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_referral_member_form" model="ir.ui.view">
+        <field name="name">referral.member.form</field>
+        <field name="model">referral.member</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="phone_number"/>
+                        </group>
+                        <group>
+                            <field name="referral_code" readonly="1"/>
+                            <field name="referred_by_id"/>
+                            <field name="point"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Referred Members">
+                            <field name="referred_member_ids">
+                                <tree>
+                                    <field name="name"/>
+                                    <field name="phone_number"/>
+                                    <field name="referral_code"/>
+                                    <field name="create_date"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_referral_member" model="ir.actions.act_window">
+        <field name="name">Referral Members</field>
+        <field name="res_model">referral.member</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem id="menu_referral_root" name="Referral" sequence="30"/>
+    <menuitem
+        id="menu_referral_member"
+        name="Members"
+        parent="menu_referral_root"
+        action="action_referral_member"
+        sequence="10"
+    />
+</odoo>

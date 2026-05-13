@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="referral_registration_page" name="Referral Registration Page">
+        <t t-call="website.layout">
+            <div id="wrap" class="referral-register-page">
+                <section class="container py-5">
+                    <div class="row justify-content-center">
+                        <div class="col-lg-7 col-md-9">
+                            <div class="card referral-card border-0 shadow-sm">
+                                <div class="card-body p-4 p-md-5">
+                                    <h1 class="register-title mb-4 text-center">Registrasi Member</h1>
+
+                                    <t t-if="error_message">
+                                        <div class="alert alert-danger" role="alert">
+                                            <t t-esc="error_message"/>
+                                        </div>
+                                    </t>
+
+                                    <t t-if="success_message">
+                                        <div class="alert alert-success" role="alert">
+                                            <p class="mb-1"><strong><t t-esc="success_message"/></strong></p>
+                                            <t t-if="created_member">
+                                                <p class="mb-0">Kode referral Anda: <strong><t t-esc="created_member.referral_code"/></strong></p>
+                                            </t>
+                                        </div>
+                                    </t>
+
+                                    <form action="/referral/register" method="post" class="row g-3">
+                                        <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+
+                                        <div class="col-md-6">
+                                            <label class="form-label">Nama Lengkap</label>
+                                            <input
+                                                type="text"
+                                                name="name"
+                                                class="form-control"
+                                                required="required"
+                                                t-att-value="form_values.get('name', '')"
+                                                placeholder="Contoh: Budi Santoso"
+                                            />
+                                        </div>
+
+                                        <div class="col-md-6">
+                                            <label class="form-label">Nomor Telepon / Contact</label>
+                                            <input
+                                                type="text"
+                                                name="phone_number"
+                                                class="form-control"
+                                                required="required"
+                                                t-att-value="form_values.get('phone_number', '')"
+                                                placeholder="Contoh: 081234567890"
+                                            />
+                                        </div>
+
+                                        <div class="col-12">
+                                            <label class="form-label">Kode Referral (Opsional)</label>
+                                            <input
+                                                type="text"
+                                                name="referral_code"
+                                                class="form-control text-uppercase"
+                                                t-att-value="form_values.get('referral_code', '')"
+                                                placeholder="Contoh: A1B2C3"
+                                            />
+                                            <small class="text-muted">Jika diisi, sistem akan memvalidasi kode referral sebelum akun dibuat.</small>
+                                        </div>
+
+                                        <div class="col-12 d-grid d-md-flex justify-content-md-end mt-3">
+                                            <button type="submit" class="btn btn-register px-4 py-2">Daftar Sekarang</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <style>
+                .referral-register-page {
+                    --rr-ink: #1f2937;
+                    --rr-muted: #6b7280;
+                    --rr-accent: #d97706;
+                    --rr-accent-2: #b45309;
+                    --rr-surface: #ffffff;
+                    --rr-bg-soft: #f8fafc;
+                    background:
+                        radial-gradient(circle at 20% 15%, rgba(217, 119, 6, 0.12), transparent 35%),
+                        linear-gradient(180deg, #f8fafc 0%, #eef2f7 100%);
+                    min-height: calc(100vh - 120px);
+                }
+                .referral-register-page .register-title {
+                    color: var(--rr-ink);
+                    font-weight: 700;
+                }
+                .referral-register-page .referral-card {
+                    border-radius: 0.85rem;
+                    background: var(--rr-surface);
+                    border: 1px solid rgba(31, 41, 55, 0.08);
+                    animation: rr-slide-up 0.6s ease;
+                }
+                .referral-register-page .form-control {
+                    border-radius: 0.55rem;
+                    border-color: rgba(31, 41, 55, 0.16);
+                    padding: 0.7rem 0.85rem;
+                }
+                .referral-register-page .form-control:focus {
+                    box-shadow: 0 0 0 0.2rem rgba(217, 119, 6, 0.2);
+                    border-color: rgba(217, 119, 6, 0.55);
+                }
+                .referral-register-page .btn-register {
+                    background: linear-gradient(90deg, var(--rr-accent) 0%, var(--rr-accent-2) 100%);
+                    color: #fff;
+                    border: none;
+                    border-radius: 0.6rem;
+                    font-weight: 600;
+                    transition: transform 0.2s ease, box-shadow 0.2s ease;
+                }
+                .referral-register-page .btn-register:hover {
+                    color: #fff;
+                    transform: translateY(-1px);
+                    box-shadow: 0 8px 20px rgba(175, 0, 45, 0.25);
+                }
+                @keyframes rr-slide-up {
+                    from {
+                        opacity: 0;
+                        transform: translateY(14px);
+                    }
+                    to {
+                        opacity: 1;
+                        transform: translateY(0);
+                    }
+                }
+            </style>
+        </t>
+    </template>
+</odoo>
