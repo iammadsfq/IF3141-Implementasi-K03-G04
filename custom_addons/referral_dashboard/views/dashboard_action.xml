@@ -4,12 +4,10 @@
         <field name="name">Referral Dashboard</field>
         <field name="tag">referral_dashboard_client_action</field>
     </record>
-
-    <menuitem id="menu_referral_root" name="Referral Analytics" sequence="10"/>
     
     <menuitem id="menu_referral_dashboard" 
               name="Dashboard" 
-              parent="menu_referral_root" 
+              parent="referral_registration.menu_referral_root" 
               action="action_referral_dashboard" 
               sequence="1"/>
 </odoo>

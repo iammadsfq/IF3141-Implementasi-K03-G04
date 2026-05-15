@@ -1,44 +1,90 @@
 /** @odoo-module */
 
-import { Component, useState } from "@odoo/owl";
+import { Component, onWillStart, useState } from "@odoo/owl";
+import { useService } from "@web/core/utils/hooks";
 import { registry } from "@web/core/registry";
 
 export class ReferralPolicy extends Component {
     setup() {
-        // State untuk menyimpan nilai input dan status notifikasi
+        this.orm = useService("orm");
         this.state = useState({
-            pointPerReferral: 50,
-            maxPointMonthly: 1000,
+            policyId: false,
+            pointPerReferral: 0,
+            maxPointMonthly: 0,
+            isLoading: true,
+            isSaving: false,
             showSuccess: false,
             showError: false,
             errorMessage: "",
         });
+
+        onWillStart(async () => {
+            await this.loadPolicy();
+        });
     }
 
-    savePolicy() {
-        if (this.state.pointPerReferral < 0 || this.state.maxPointMonthly < 0 || 
-            this.state.pointPerReferral === "" || this.state.maxPointMonthly === "") {
-            
+    async loadPolicy() {
+        try {
+            const policy = await this.orm.call("referral.policy", "get_policy_payload", []);
+            this.state.policyId = policy.id;
+            this.state.pointPerReferral = policy.point_per_referral;
+            this.state.maxPointMonthly = policy.max_point_monthly;
+            this.state.showError = false;
+        } catch (error) {
+            this.state.showError = true;
+            this.state.errorMessage = "Kebijakan aktif gagal dimuat.";
+        } finally {
+            this.state.isLoading = false;
+        }
+    }
+
+    async savePolicy() {
+        const pointPerReferral = Number.parseInt(this.state.pointPerReferral, 10);
+        const maxPointMonthly = Number.parseInt(this.state.maxPointMonthly, 10);
+
+        if (
+            Number.isNaN(pointPerReferral) ||
+            Number.isNaN(maxPointMonthly) ||
+            pointPerReferral < 0 ||
+            maxPointMonthly < 0
+        ) {
             this.state.showError = true;
             this.state.showSuccess = false;
             this.state.errorMessage = "Format input tidak valid. Pastikan Anda memasukkan angka positif.";
             return;
         }
-        
-        // Simulasi Berhasil Simpan
-        this.state.showError = false;
-        this.state.showSuccess = true;
-        
-        setTimeout(() => {
+
+        this.state.isSaving = true;
+        try {
+            const policy = await this.orm.call("referral.policy", "save_policy_from_dashboard", [
+                {
+                    point_per_referral: pointPerReferral,
+                    max_point_monthly: maxPointMonthly,
+                },
+            ]);
+            this.state.policyId = policy.id;
+            this.state.pointPerReferral = policy.point_per_referral;
+            this.state.maxPointMonthly = policy.max_point_monthly;
+            this.state.showError = false;
+            this.state.showSuccess = true;
+
+            setTimeout(() => {
+                this.state.showSuccess = false;
+            }, 4000);
+        } catch (error) {
+            this.state.showError = true;
             this.state.showSuccess = false;
-        }, 4000);
+            this.state.errorMessage = "Kebijakan gagal disimpan. Periksa kembali nilai yang dimasukkan.";
+        } finally {
+            this.state.isSaving = false;
+        }
     }
     
-    cancel() {
-        this.state.pointPerReferral = 50;
-        this.state.maxPointMonthly = 1000;
+    async cancel() {
         this.state.showSuccess = false;
         this.state.showError = false;
+        this.state.isLoading = true;
+        await this.loadPolicy();
     }
 }
 

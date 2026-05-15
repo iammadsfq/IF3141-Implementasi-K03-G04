@@ -1,2 +1,4 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_referral_policy,access.referral.policy,model_referral_policy,base.group_user,1,1,1,1
+access_referral_transaction,access.referral.transaction,model_referral_transaction,base.group_user,1,1,1,1
+access_referral_reward_log,access.referral.reward.log,model_referral_reward_log,base.group_user,1,0,0,0

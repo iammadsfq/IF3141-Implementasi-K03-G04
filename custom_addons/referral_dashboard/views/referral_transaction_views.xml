@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_referral_transaction_tree" model="ir.ui.view">
+        <field name="name">referral.transaction.tree</field>
+        <field name="model">referral.transaction</field>
+        <field name="arch" type="xml">
+            <tree decoration-success="state == 'rewarded'" decoration-muted="state in ('non_referral', 'already_rewarded', 'limit_reached')">
+                <field name="order_ref"/>
+                <field name="member_id"/>
+                <field name="referrer_id"/>
+                <field name="amount"/>
+                <field name="transaction_date"/>
+                <field name="points_awarded"/>
+                <field name="state"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_referral_transaction_form" model="ir.ui.view">
+        <field name="name">referral.transaction.form</field>
+        <field name="model">referral.transaction</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button
+                        name="action_validate_referral_reward"
+                        string="Validasi Reward"
+                        type="object"
+                        class="oe_highlight"
+                    />
+                    <field name="state" widget="statusbar" statusbar_visible="draft,rewarded,non_referral,already_rewarded,limit_reached"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="order_ref"/>
+                            <field name="member_id"/>
+                            <field name="referrer_id" readonly="1"/>
+                            <field name="amount"/>
+                        </group>
+                        <group>
+                            <field name="transaction_date"/>
+                            <field name="policy_id" readonly="1"/>
+                            <field name="points_awarded" readonly="1"/>
+                            <field name="reward_log_id" readonly="1"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="note" readonly="1"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_referral_reward_log_tree" model="ir.ui.view">
+        <field name="name">referral.reward.log.tree</field>
+        <field name="model">referral.reward.log</field>
+        <field name="arch" type="xml">
+            <tree create="0" edit="0" delete="0">
+                <field name="reward_date"/>
+                <field name="member_id"/>
+                <field name="referred_member_id"/>
+                <field name="transaction_id"/>
+                <field name="amount"/>
+                <field name="points"/>
+                <field name="policy_id"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_referral_reward_log_form" model="ir.ui.view">
+        <field name="name">referral.reward.log.form</field>
+        <field name="model">referral.reward.log</field>
+        <field name="arch" type="xml">
+            <form create="0" edit="0" delete="0">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="member_id"/>
+                            <field name="referred_member_id"/>
+                            <field name="transaction_id"/>
+                        </group>
+                        <group>
+                            <field name="policy_id"/>
+                            <field name="amount"/>
+                            <field name="points"/>
+                            <field name="reward_date"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_referral_transaction" model="ir.actions.act_window">
+        <field name="name">Transaksi Referral</field>
+        <field name="res_model">referral.transaction</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <record id="action_referral_reward_log" model="ir.actions.act_window">
+        <field name="name">Log Reward</field>
+        <field name="res_model">referral.reward.log</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem
+        id="menu_referral_transaction"
+        name="Transaksi"
+        parent="referral_registration.menu_referral_root"
+        action="action_referral_transaction"
+        sequence="20"
+    />
+    <menuitem
+        id="menu_referral_reward_log"
+        name="Log Reward"
+        parent="referral_registration.menu_referral_root"
+        action="action_referral_reward_log"
+        sequence="30"
+    />
+</odoo>

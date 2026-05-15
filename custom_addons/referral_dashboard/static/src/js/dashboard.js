@@ -1,24 +1,46 @@
 /** @odoo-module */
 
-import { Component } from "@odoo/owl";
+import { Component, onWillStart, useState } from "@odoo/owl";
+import { useService } from "@web/core/utils/hooks";
 import { registry } from "@web/core/registry";
 
 export class ReferralDashboard extends Component {
     setup() {
-        // Data dummy UI (Implementasi asli nanti disini)
-        this.kpiData = {
-            totalReferrals: 342,
-            totalRevenue: "Rp 125.500.000",
-            totalPoints: 15400
-        };
+        this.orm = useService("orm");
+        this.state = useState({
+            period: "month",
+            isLoading: true,
+            errorMessage: "",
+            kpiData: {
+                totalReferrals: 0,
+                totalRevenue: "Rp 0",
+                totalPoints: 0,
+            },
+            topReferrers: [],
+        });
 
-        this.topReferrers = [
-            { id: 1, name: "Budi Santoso", referrals: 45, points: 2250 },
-            { id: 2, name: "Siti Aminah", referrals: 38, points: 1900 },
-            { id: 3, name: "Andi Darmawan", referrals: 29, points: 1450 },
-            { id: 4, name: "Rina Gunawan", referrals: 15, points: 750 },
-            { id: 5, name: "Eko Pratama", referrals: 12, points: 600 }
-        ];
+        onWillStart(async () => {
+            await this.loadDashboard();
+        });
+    }
+
+    async loadDashboard() {
+        this.state.isLoading = true;
+        try {
+            const data = await this.orm.call("referral.transaction", "get_dashboard_metrics", [this.state.period]);
+            this.state.kpiData = data.kpiData;
+            this.state.topReferrers = data.topReferrers;
+            this.state.errorMessage = "";
+        } catch (error) {
+            this.state.errorMessage = "Dashboard gagal dimuat. Pastikan modul referral sudah diperbarui.";
+        } finally {
+            this.state.isLoading = false;
+        }
+    }
+
+    async setPeriod(period) {
+        this.state.period = period;
+        await this.loadDashboard();
     }
 }
 

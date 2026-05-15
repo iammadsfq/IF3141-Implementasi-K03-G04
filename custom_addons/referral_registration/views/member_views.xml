@@ -9,6 +9,7 @@
                 <field name="phone_number"/>
                 <field name="referral_code"/>
                 <field name="referred_by_id"/>
+                <field name="referred_member_count"/>
                 <field name="point"/>
                 <field name="create_date"/>
             </tree>
@@ -29,6 +30,7 @@
                         <group>
                             <field name="referral_code" readonly="1"/>
                             <field name="referred_by_id"/>
+                            <field name="referred_member_count"/>
                             <field name="point"/>
                         </group>
                     </group>
@@ -55,7 +57,7 @@
         <field name="view_mode">tree,form</field>
     </record>
 
-    <menuitem id="menu_referral_root" name="Referral" sequence="30"/>
+    <menuitem id="menu_referral_root" name="Referral Program" sequence="30"/>
     <menuitem
         id="menu_referral_member"
         name="Members"

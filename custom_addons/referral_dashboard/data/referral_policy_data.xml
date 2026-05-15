@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <record id="referral_policy_default" model="referral.policy">
+            <field name="name">Kebijakan Referral Aktif</field>
+            <field name="active">1</field>
+            <field name="point_per_referral">50</field>
+            <field name="max_point_monthly">1000</field>
+        </record>
+    </data>
+</odoo>
