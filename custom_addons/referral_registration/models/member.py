@@ -55,8 +55,15 @@ class ReferralMember(models.Model):
         raise ValidationError(_("Gagal membuat kode referral unik. Silakan coba lagi."))
 
     def computePoints(self, points=0):
+        points = int(points or 0)
+        if points == 0:
+            return True
         for member in self:
-            member.point += int(points or 0)
+            self.env.cr.execute(
+                "UPDATE referral_member SET point = point + %s WHERE id = %s",
+                (points, member.id)
+            )
+            member.invalidate_recordset(['point'])
         return True
 
     def _compute_referral_summary(self):
@@ -116,6 +123,8 @@ class ReferralMember(models.Model):
             referrer = self.searchBasedOnReferral(normalized_referral_code)
             if not referrer:
                 raise ValidationError(_("Kode referral tidak ditemukan."))
+            if referrer.phone_number == values["phone_number"]:
+                raise ValidationError(_("Anda tidak dapat menggunakan kode referral milik Anda sendiri."))
             values["referred_by_id"] = referrer.id
 
         new_member = self.create(values)

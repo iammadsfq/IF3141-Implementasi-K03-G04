@@ -25,7 +25,11 @@ export class ReferralPolicy extends Component {
 
     async loadPolicy() {
         try {
-            const policy = await this.orm.call("referral.policy", "get_policy_payload", []);
+            const policy = await this.orm.call(
+                "referral.policy",
+                "get_policy_payload",
+                []
+            );
             this.state.policyId = policy.id;
             this.state.pointPerReferral = policy.point_per_referral;
             this.state.maxPointMonthly = policy.max_point_monthly;
@@ -45,41 +49,39 @@ export class ReferralPolicy extends Component {
         if (
             Number.isNaN(pointPerReferral) ||
             Number.isNaN(maxPointMonthly) ||
-            pointPerReferral < 0 ||
-            maxPointMonthly < 0
+            pointPerReferral <= 0 ||
+            maxPointMonthly <= 0
         ) {
             this.state.showError = true;
             this.state.showSuccess = false;
-            this.state.errorMessage = "Format input tidak valid. Pastikan Anda memasukkan angka positif.";
+            this.state.errorMessage =
+                "Format input tidak valid. Pastikan Anda memasukkan angka positif.";
             return;
         }
 
         this.state.isSaving = true;
         try {
-            const policy = await this.orm.call("referral.policy", "save_policy_from_dashboard", [
-                {
-                    point_per_referral: pointPerReferral,
-                    max_point_monthly: maxPointMonthly,
-                },
-            ]);
+            const policy = await this.orm.call(
+                "referral.policy",
+                "save_policy_from_dashboard",
+                [{ point_per_referral: pointPerReferral, max_point_monthly: maxPointMonthly }]
+            );
             this.state.policyId = policy.id;
             this.state.pointPerReferral = policy.point_per_referral;
             this.state.maxPointMonthly = policy.max_point_monthly;
             this.state.showError = false;
             this.state.showSuccess = true;
-
-            setTimeout(() => {
-                this.state.showSuccess = false;
-            }, 4000);
+            setTimeout(() => { this.state.showSuccess = false; }, 4000);
         } catch (error) {
             this.state.showError = true;
             this.state.showSuccess = false;
-            this.state.errorMessage = "Kebijakan gagal disimpan. Periksa kembali nilai yang dimasukkan.";
+            this.state.errorMessage =
+                "Kebijakan gagal disimpan. Periksa kembali nilai yang dimasukkan.";
         } finally {
             this.state.isSaving = false;
         }
     }
-    
+
     async cancel() {
         this.state.showSuccess = false;
         this.state.showError = false;

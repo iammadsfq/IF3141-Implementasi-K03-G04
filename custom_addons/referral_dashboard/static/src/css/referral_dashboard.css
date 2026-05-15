@@ -1,0 +1,346 @@
+
+.nomar-dashboard-wrap,
+.nomar-policy-wrap {
+  --nm-dk:    #2C1506;
+  --nm-br:    #6B3A1F;
+  --nm-mid:   #8B4A27;
+  --nm-lt:    #C4824A;
+  --nm-cream: #F5EDD8;
+  --nm-cb:    #E8D5B7;
+  --nm-clt:   #FDF8F0;
+  --nm-gold:  #C9952A;
+  --nm-glite: #F0D080;
+  --nm-ink:   #1C0E03;
+  --nm-muted: #7A5C46;
+  font-family: 'Plus Jakarta Sans', 'Segoe UI', system-ui, sans-serif;
+}
+
+/* ============================================================
+   DASHBOARD
+   ============================================================ */
+.nomar-dashboard-wrap {
+  padding: 28px 32px;
+  background: #F9F5EE;
+  min-height: 100%;
+}
+
+/* Header */
+.nomar-dash-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 32px;
+}
+.nomar-dash-title-group {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.nomar-dash-icon { font-size: 2.4rem; }
+.nomar-dash-title {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--nm-dk);
+  margin: 0 0 3px;
+  line-height: 1.2;
+}
+.nomar-dash-sub { font-size: .82rem; color: var(--nm-muted); margin: 0; }
+
+/* Period bar */
+.nomar-period-bar {
+  display: flex;
+  gap: 6px;
+  background: var(--nm-cb);
+  border-radius: 12px;
+  padding: 5px;
+}
+.nomar-period-btn {
+  border: none;
+  background: transparent;
+  padding: 8px 18px;
+  border-radius: 8px;
+  font-size: .83rem;
+  font-weight: 600;
+  cursor: pointer;
+  color: var(--nm-muted);
+  transition: all .18s;
+  font-family: inherit;
+}
+.nomar-period-btn:hover { color: var(--nm-br); }
+.nomar-period-btn.active {
+  background: #fff;
+  color: var(--nm-dk);
+  box-shadow: 0 2px 10px rgba(44,21,6,.13);
+}
+
+/* Loading */
+.nomar-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 64px 0;
+  color: var(--nm-muted);
+  font-size: .95rem;
+}
+.nomar-spinner {
+  width: 26px; height: 26px;
+  border: 3px solid var(--nm-cb);
+  border-top-color: var(--nm-br);
+  border-radius: 50%;
+  animation: nm-spin .7s linear infinite;
+  flex-shrink: 0;
+}
+@keyframes nm-spin { to { transform: rotate(360deg); } }
+
+/* Alert */
+.nomar-alert {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 13px 16px;
+  border-radius: 10px;
+  font-size: .88rem;
+  margin-bottom: 20px;
+}
+.nomar-alert.error  { background: #FFF0F0; color: #8B1A1A; border-left: 4px solid #8B1A1A; }
+.nomar-alert.success{ background: #EAF5EC; color: #2E6E3A; border-left: 4px solid #2E6E3A; }
+
+/* ── KPI Grid — full width, 3 equal columns ── */
+.nomar-kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  margin-bottom: 28px;
+  width: 100%;
+}
+.nomar-kpi-card {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  padding: 32px 28px;
+  border-radius: 18px;
+  border: 1px solid var(--nm-cb);
+  background: #fff;
+  box-shadow: 0 4px 18px rgba(44,21,6,.09);
+  transition: transform .2s, box-shadow .2s;
+  width: 100%;
+}
+.nomar-kpi-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 28px rgba(44,21,6,.14);
+}
+.nomar-kpi-icon {
+  font-size: 2.6rem;
+  width: 68px; height: 68px;
+  border-radius: 16px;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.nomar-kpi-blue  .nomar-kpi-icon { background: #EEF4FF; }
+.nomar-kpi-green .nomar-kpi-icon { background: #EAF5EC; }
+.nomar-kpi-gold  .nomar-kpi-icon { background: #FBF3DC; }
+
+.nomar-kpi-info { flex: 1; }
+.nomar-kpi-label {
+  font-size: .8rem; font-weight: 700;
+  text-transform: uppercase; letter-spacing: .6px;
+  color: var(--nm-muted); margin-bottom: 8px;
+}
+.nomar-kpi-value {
+  font-size: 2.4rem; font-weight: 800;
+  line-height: 1; margin-bottom: 6px;
+  font-variant-numeric: tabular-nums;
+}
+.nomar-kpi-blue  .nomar-kpi-value { color: #1D4ED8; }
+.nomar-kpi-green .nomar-kpi-value { color: #2E6E3A; }
+.nomar-kpi-gold  .nomar-kpi-value { color: var(--nm-gold); }
+.nomar-kpi-desc  { font-size: .75rem; color: var(--nm-muted); }
+
+/* ── Leaderboard ── */
+.nomar-leaderboard-card {
+  background: #fff;
+  border-radius: 18px;
+  border: 1px solid var(--nm-cb);
+  box-shadow: 0 2px 14px rgba(44,21,6,.07);
+  overflow: hidden;
+  margin-bottom: 24px;
+}
+.nomar-leaderboard-header {
+  display: flex; align-items: center; gap: 10px;
+  padding: 18px 24px;
+  border-bottom: 1px solid var(--nm-cb);
+  background: var(--nm-clt);
+}
+.nomar-lb-bar {
+  width: 5px; height: 22px;
+  background: var(--nm-gold); border-radius: 4px; flex-shrink: 0;
+}
+.nomar-leaderboard-header h2 {
+  font-size: 1.05rem; font-weight: 700; color: var(--nm-dk); margin: 0;
+}
+.nomar-lb-table { width: 100%; border-collapse: collapse; }
+.nomar-lb-table thead tr { background: var(--nm-clt); }
+.nomar-lb-table th {
+  padding: 12px 20px;
+  font-size: .74rem; font-weight: 700;
+  text-transform: uppercase; letter-spacing: .6px;
+  color: var(--nm-muted); text-align: left;
+  border-bottom: 1px solid var(--nm-cb);
+}
+.nomar-th-rank { width: 80px; text-align: center; }
+.nomar-th-r    { text-align: right; }
+.nomar-lb-table tbody tr {
+  border-bottom: 1px solid rgba(232,213,183,.5);
+  transition: background .15s;
+}
+.nomar-lb-table tbody tr:hover { background: var(--nm-clt); }
+.nomar-lb-table tbody tr:last-child { border-bottom: none; }
+.nomar-lb-table td { padding: 15px 20px; font-size: .93rem; color: var(--nm-ink); }
+.nomar-td-rank { text-align: center; }
+.nomar-td-name { font-weight: 600; color: var(--nm-dk); }
+.nomar-td-r    { text-align: right; }
+.nomar-td-bold { font-weight: 700; color: var(--nm-br); }
+.nomar-td-gold { font-weight: 800; color: var(--nm-gold); }
+
+.nomar-badge {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 30px; height: 30px; border-radius: 50%;
+  font-size: .85rem; font-weight: 800;
+}
+.nomar-badge.gold   { background: linear-gradient(135deg,#F0D080,#C9952A); color:#fff; box-shadow:0 2px 8px rgba(201,149,42,.4); }
+.nomar-badge.silver { background: linear-gradient(135deg,#E2E8F0,#94A3B8); color:#fff; }
+.nomar-badge.bronze { background: linear-gradient(135deg,#FED7AA,#C4824A); color:#fff; }
+.nomar-badge.plain  { background: var(--nm-cream); color: var(--nm-muted); }
+
+.nomar-empty {
+  display: flex; flex-direction: column; align-items: center;
+  justify-content: center; padding: 48px 20px;
+  color: var(--nm-muted); gap: 8px;
+  font-size: .95rem;
+}
+
+/* Responsive KPI */
+@media (max-width: 960px) {
+  .nomar-kpi-grid { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 600px) {
+  .nomar-dashboard-wrap { padding: 16px 14px; }
+  .nomar-kpi-grid { grid-template-columns: 1fr; }
+  .nomar-dash-header { flex-direction: column; align-items: flex-start; }
+  .nomar-kpi-card { padding: 22px 18px; }
+}
+
+/* ============================================================
+   POLICY  — card centered, max-width 640px
+   ============================================================ */
+.nomar-policy-wrap {
+  background: #F9F5EE;
+  min-height: 100%;
+  padding: 40px 20px 60px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.nomar-policy-card {
+  width: 100%;
+  max-width: 640px;
+  background: #fff;
+  border-radius: 20px;
+  border: 1px solid var(--nm-cb);
+  box-shadow: 0 12px 40px rgba(44,21,6,.16);
+  overflow: hidden;
+}
+
+.nomar-policy-card-header {
+  display: flex; align-items: center; gap: 16px;
+  padding: 24px 30px;
+  background: linear-gradient(135deg, var(--nm-dk) 0%, var(--nm-br) 100%);
+}
+.nomar-header-icon {
+  font-size: 1.6rem;
+  width: 48px; height: 48px;
+  background: rgba(255,255,255,.15); border-radius: 12px;
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.nomar-policy-card-header h2 {
+  font-size: 1.1rem; font-weight: 700; color: #fff; margin: 0 0 3px;
+}
+.nomar-policy-card-header p {
+  font-size: .8rem; color: rgba(255,255,255,.72); margin: 0;
+}
+
+.nomar-policy-body { padding: 28px 30px; }
+
+/* Alert (reused) */
+.nomar-policy-wrap .nomar-alert { margin-bottom: 18px; }
+
+/* Form */
+.nomar-form-row {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 22px;
+}
+.nomar-form-group { display: flex; flex-direction: column; }
+.nomar-form-group label {
+  font-size: .78rem; font-weight: 700;
+  text-transform: uppercase; letter-spacing: .6px;
+  color: var(--nm-muted); margin-bottom: 7px;
+}
+.nomar-form-group input {
+  padding: 13px 14px;
+  border: 1.5px solid var(--nm-cb); border-radius: 10px;
+  font-size: .95rem; font-family: inherit;
+  color: var(--nm-ink); background: var(--nm-clt); outline: none;
+  transition: border-color .18s, box-shadow .18s, background .18s;
+  font-variant-numeric: tabular-nums;
+}
+.nomar-form-group input:focus {
+  border-color: var(--nm-br); background: #fff;
+  box-shadow: 0 0 0 3px rgba(107,58,31,.10);
+}
+.nomar-field-desc { font-size: .73rem; color: var(--nm-muted); margin-top: 5px; line-height: 1.45; }
+
+/* Actions */
+.nomar-policy-actions { display: flex; gap: 12px; margin-bottom: 24px; }
+.nomar-btn-secondary, .nomar-btn-primary {
+  flex: 1; padding: 13px;
+  border: none; border-radius: 10px;
+  font-size: .95rem; font-weight: 700; font-family: inherit;
+  cursor: pointer; transition: all .2s;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+}
+.nomar-btn-secondary {
+  background: transparent; color: var(--nm-br); border: 1.5px solid var(--nm-cb);
+}
+.nomar-btn-secondary:hover:not(:disabled) { background: var(--nm-cream); border-color: var(--nm-lt); }
+.nomar-btn-primary {
+  background: linear-gradient(135deg, var(--nm-br), var(--nm-dk));
+  color: #fff; box-shadow: 0 4px 14px rgba(107,58,31,.28);
+}
+.nomar-btn-primary:hover:not(:disabled) {
+  transform: translateY(-2px); box-shadow: 0 8px 22px rgba(107,58,31,.35);
+}
+.nomar-btn-secondary:disabled,
+.nomar-btn-primary:disabled { opacity: .6; cursor: not-allowed; transform: none !important; }
+
+/* Guide */
+.nomar-guide {
+  background: var(--nm-clt); border: 1px solid var(--nm-cb);
+  border-radius: 12px; padding: 18px 20px;
+}
+.nomar-guide h4 {
+  font-size: .72rem; font-weight: 700;
+  text-transform: uppercase; letter-spacing: .8px;
+  color: var(--nm-muted); margin: 0 0 12px;
+}
+.nomar-guide ul { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 8px; }
+.nomar-guide li { font-size: .85rem; color: var(--nm-muted); line-height: 1.5; }
+.nomar-guide li strong { color: var(--nm-dk); }
+
+@media (max-width: 500px) {
+  .nomar-form-row { grid-template-columns: 1fr; }
+  .nomar-policy-body { padding: 20px 18px; }
+  .nomar-policy-card-header { padding: 20px 18px; }
+}

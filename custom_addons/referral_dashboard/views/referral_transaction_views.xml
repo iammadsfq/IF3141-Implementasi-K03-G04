@@ -1,17 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- referral_dashboard/views/referral_transaction_views.xml -->
 <odoo>
+
+    <!-- ============================================================ -->
+    <!-- REFERRAL TRANSACTION — TREE VIEW                              -->
+    <!-- ============================================================ -->
     <record id="view_referral_transaction_tree" model="ir.ui.view">
         <field name="name">referral.transaction.tree</field>
         <field name="model">referral.transaction</field>
         <field name="arch" type="xml">
-            <tree decoration-success="state == 'rewarded'" decoration-muted="state in ('non_referral', 'already_rewarded', 'limit_reached')">
-                <field name="order_ref"/>
-                <field name="member_id"/>
-                <field name="referrer_id"/>
-                <field name="amount"/>
-                <field name="transaction_date"/>
-                <field name="points_awarded"/>
-                <field name="state"/>
+            <tree string="Transaksi Referral"
+                  decoration-success="state=='rewarded'"
+                  decoration-info="state=='draft'"
+                  decoration-warning="state=='limit_reached'"
+                  decoration-muted="state in ('cancelled','non_referral','already_rewarded')">
+                <field name="order_ref" string="ID Order POS"/>
+                <field name="member_id" string="Member Pembeli"/>
+                <field name="referrer_id" string="Referrer"/>
+                <field name="amount" string="Nilai Transaksi" widget="monetary"/>
+                <field name="transaction_date" string="Tgl. Transaksi"/>
+                <field name="state" string="Status" widget="badge"
+                       decoration-success="state=='rewarded'"
+                       decoration-info="state=='draft'"
+                       decoration-warning="state=='limit_reached'"
+                       decoration-muted="state in ('cancelled','non_referral','already_rewarded')"/>
+                <field name="points_awarded" string="Poin"/>
+                <field name="policy_id" string="Kebijakan" optional="hide"/>
             </tree>
         </field>
     </record>
@@ -20,103 +34,192 @@
         <field name="name">referral.transaction.form</field>
         <field name="model">referral.transaction</field>
         <field name="arch" type="xml">
-            <form>
+            <form string="Transaksi Referral">
                 <header>
-                    <button
-                        name="action_validate_referral_reward"
-                        string="Validasi Reward"
-                        type="object"
-                        class="oe_highlight"
-                    />
-                    <field name="state" widget="statusbar" statusbar_visible="draft,rewarded,non_referral,already_rewarded,limit_reached"/>
+                    <button name="action_validate_referral_reward"
+                            string="&#10003; Validasi Reward"
+                            type="object"
+                            class="oe_highlight"
+                            invisible="state != 'draft'"
+                            confirm="Apakah Anda yakin ingin memvalidasi reward untuk transaksi ini?"/>
+                    <button name="action_cancel"
+                            string="&#10005; Batalkan Transaksi"
+                            type="object"
+                            invisible="state != 'draft'"
+                            confirm="Yakin ingin membatalkan transaksi ini? Tindakan ini tidak dapat dibatalkan."/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="draft,rewarded,cancelled"/>
                 </header>
                 <sheet>
+                    <div class="oe_title">
+                        <label for="order_ref" string="ID Order POS"/>
+                        <h1>
+                            <field name="order_ref"
+                                   placeholder="Contoh: POS/2025/001"
+                                   readonly="state != 'draft'"/>
+                        </h1>
+                    </div>
                     <group>
-                        <group>
-                            <field name="order_ref"/>
-                            <field name="member_id"/>
-                            <field name="referrer_id" readonly="1"/>
-                            <field name="amount"/>
+                        <group string="Informasi Transaksi">
+                            <field name="member_id" string="Member Pembeli"
+                                   readonly="state != 'draft'"/>
+                            <field name="referrer_id" string="Referrer (Otomatis)"/>
+                            <field name="amount" string="Nilai Transaksi (Rp)"
+                                   readonly="state != 'draft'"/>
+                            <field name="transaction_date" string="Tanggal Transaksi"
+                                   readonly="state != 'draft'"/>
                         </group>
-                        <group>
-                            <field name="transaction_date"/>
-                            <field name="policy_id" readonly="1"/>
-                            <field name="points_awarded" readonly="1"/>
-                            <field name="reward_log_id" readonly="1"/>
+                        <group string="Hasil Validasi">
+                            <field name="policy_id" string="Kebijakan Digunakan"/>
+                            <field name="points_awarded" string="Poin Diberikan"/>
+                            <field name="reward_log_id" string="Log Reward"/>
                         </group>
                     </group>
-                    <group>
-                        <field name="note" readonly="1"/>
-                    </group>
-                </sheet>
-            </form>
-        </field>
-    </record>
-
-    <record id="view_referral_reward_log_tree" model="ir.ui.view">
-        <field name="name">referral.reward.log.tree</field>
-        <field name="model">referral.reward.log</field>
-        <field name="arch" type="xml">
-            <tree create="0" edit="0" delete="0">
-                <field name="reward_date"/>
-                <field name="member_id"/>
-                <field name="referred_member_id"/>
-                <field name="transaction_id"/>
-                <field name="amount"/>
-                <field name="points"/>
-                <field name="policy_id"/>
-            </tree>
-        </field>
-    </record>
-
-    <record id="view_referral_reward_log_form" model="ir.ui.view">
-        <field name="name">referral.reward.log.form</field>
-        <field name="model">referral.reward.log</field>
-        <field name="arch" type="xml">
-            <form create="0" edit="0" delete="0">
-                <sheet>
-                    <group>
-                        <group>
-                            <field name="member_id"/>
-                            <field name="referred_member_id"/>
-                            <field name="transaction_id"/>
-                        </group>
-                        <group>
-                            <field name="policy_id"/>
-                            <field name="amount"/>
-                            <field name="points"/>
-                            <field name="reward_date"/>
-                        </group>
+                    <group string="Catatan">
+                        <field name="note" nolabel="1"
+                               placeholder="Catatan otomatis akan muncul setelah validasi..."
+                               readonly="state != 'draft'"/>
                     </group>
                 </sheet>
             </form>
         </field>
     </record>
 
+    <!-- ============================================================ -->
+    <!-- REFERRAL TRANSACTION — SEARCH VIEW                            -->
+    <!-- ============================================================ -->
+    <record id="view_referral_transaction_search" model="ir.ui.view">
+        <field name="name">referral.transaction.search</field>
+        <field name="model">referral.transaction</field>
+        <field name="arch" type="xml">
+            <search string="Cari Transaksi">
+                <field name="order_ref" string="ID Order POS"/>
+                <field name="member_id" string="Member Pembeli"/>
+                <field name="referrer_id" string="Referrer"/>
+                <separator/>
+                <filter name="filter_draft"
+                        string="Draft"
+                        domain="[('state','=','draft')]"/>
+                <filter name="filter_rewarded"
+                        string="Reward Diberikan"
+                        domain="[('state','=','rewarded')]"/>
+                <filter name="filter_limit"
+                        string="Limit Bulanan"
+                        domain="[('state','=','limit_reached')]"/>
+                <filter name="filter_cancelled"
+                        string="Dibatalkan"
+                        domain="[('state','=','cancelled')]"/>
+                <filter name="filter_non_ref"
+                        string="Non Referral"
+                        domain="[('state','=','non_referral')]"/>
+                <separator/>
+                <filter name="filter_this_month"
+                        string="Bulan Ini"
+                        domain="[('transaction_date','&gt;=',(context_today()).strftime('%Y-%m-01'))]"/>
+                <group expand="0" string="Kelompokkan">
+                    <filter name="group_state"  string="Status"  context="{'group_by':'state'}"/>
+                    <filter name="group_member" string="Member"  context="{'group_by':'member_id'}"/>
+                    <filter name="group_date"   string="Bulan"   context="{'group_by':'transaction_date:month'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- ============================================================ -->
+    <!-- REFERRAL TRANSACTION — ACTION                                  -->
+    <!-- ============================================================ -->
     <record id="action_referral_transaction" model="ir.actions.act_window">
         <field name="name">Transaksi Referral</field>
         <field name="res_model">referral.transaction</field>
         <field name="view_mode">tree,form</field>
+        <field name="search_view_id" ref="view_referral_transaction_search"/>
+        <field name="context">{'search_default_filter_this_month': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Belum ada transaksi referral.
+            </p>
+            <p>Transaksi akan otomatis masuk saat POS melakukan sinkronisasi.</p>
+        </field>
     </record>
 
+    <!-- ============================================================ -->
+    <!-- REWARD LOG — TREE VIEW                                        -->
+    <!-- ============================================================ -->
+    <record id="view_referral_reward_log_tree" model="ir.ui.view">
+        <field name="name">referral.reward.log.tree</field>
+        <field name="model">referral.reward.log</field>
+        <field name="arch" type="xml">
+            <tree string="Log Reward Referral" create="false" delete="false">
+                <field name="reward_date" string="Tgl. Reward"/>
+                <field name="member_id" string="Referrer"/>
+                <field name="referred_member_id" string="Member Referral"/>
+                <field name="points" string="Poin" sum="Total Poin"/>
+                <field name="amount" string="Nilai Transaksi" widget="monetary" sum="Total Nilai"/>
+                <field name="policy_id" string="Kebijakan" optional="hide"/>
+                <field name="transaction_id" string="Transaksi" optional="show"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- ============================================================ -->
+    <!-- REWARD LOG — FORM VIEW                                        -->
+    <!-- ============================================================ -->
+    <record id="view_referral_reward_log_form" model="ir.ui.view">
+        <field name="name">referral.reward.log.form</field>
+        <field name="model">referral.reward.log</field>
+        <field name="arch" type="xml">
+            <form string="Log Reward" create="false" edit="false">
+                <sheet>
+                    <group string="Informasi Reward">
+                        <field name="member_id" string="Referrer"/>
+                        <field name="referred_member_id" string="Member yang Direferensikan"/>
+                        <field name="transaction_id" string="Transaksi Terkait"/>
+                        <field name="policy_id" string="Kebijakan Berlaku"/>
+                        <field name="points" string="Poin Diberikan"/>
+                        <field name="amount" string="Nilai Transaksi (Rp)"/>
+                        <field name="reward_date" string="Tanggal Reward"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- ============================================================ -->
+    <!-- REWARD LOG — SEARCH VIEW                                      -->
+    <!-- ============================================================ -->
+    <record id="view_referral_reward_log_search" model="ir.ui.view">
+        <field name="name">referral.reward.log.search</field>
+        <field name="model">referral.reward.log</field>
+        <field name="arch" type="xml">
+            <search string="Cari Log Reward">
+                <field name="member_id" string="Referrer"/>
+                <field name="referred_member_id" string="Member Referral"/>
+                <separator/>
+                <filter name="filter_this_month"
+                        string="Bulan Ini"
+                        domain="[('reward_date','&gt;=',(context_today()).strftime('%Y-%m-01'))]"/>
+                <group expand="0" string="Kelompokkan">
+                    <filter name="group_referrer" string="Referrer" context="{'group_by':'member_id'}"/>
+                    <filter name="group_month"    string="Bulan"    context="{'group_by':'reward_date:month'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- ============================================================ -->
+    <!-- REWARD LOG — ACTION                                           -->
+    <!-- ============================================================ -->
     <record id="action_referral_reward_log" model="ir.actions.act_window">
-        <field name="name">Log Reward</field>
+        <field name="name">Log Reward Referral</field>
         <field name="res_model">referral.reward.log</field>
         <field name="view_mode">tree,form</field>
+        <field name="search_view_id" ref="view_referral_reward_log_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Belum ada log reward.
+            </p>
+            <p>Log reward dibuat otomatis setelah transaksi referral tervalidasi.</p>
+        </field>
     </record>
 
-    <menuitem
-        id="menu_referral_transaction"
-        name="Transaksi"
-        parent="referral_registration.menu_referral_root"
-        action="action_referral_transaction"
-        sequence="20"
-    />
-    <menuitem
-        id="menu_referral_reward_log"
-        name="Log Reward"
-        parent="referral_registration.menu_referral_root"
-        action="action_referral_reward_log"
-        sequence="30"
-    />
 </odoo>

@@ -25,8 +25,22 @@ class ReferralPolicy(models.Model):
     @api.constrains("max_point_monthly", "point_per_referral")
     def _check_positive_policy_values(self):
         for policy in self:
-            if policy.max_point_monthly < 0 or policy.point_per_referral < 0:
-                raise ValidationError(_("Nilai poin dan batas bulanan tidak boleh negatif."))
+            if policy.max_point_monthly <= 0 or policy.point_per_referral <= 0:
+                raise ValidationError(_("Nilai poin dan batas bulanan harus lebih dari nol."))
+    
+    @api.constrains("active")
+    def _check_single_active_policy(self):
+        for policy in self:
+            if policy.active:
+                other_active = self.search([
+                    ("active", "=", True),
+                    ("id", "!=", policy.id),
+                ])
+                if other_active:
+                    raise ValidationError(
+                        _("Hanya boleh ada satu kebijakan referral yang aktif. "
+                        "Nonaktifkan kebijakan lain terlebih dahulu.")
+                    )
 
     @api.model
     def getActivePolicy(self):
@@ -64,8 +78,8 @@ class ReferralPolicy(models.Model):
     def save_policy_from_dashboard(self, values):
         point_per_referral = int((values or {}).get("point_per_referral") or 0)
         max_point_monthly = int((values or {}).get("max_point_monthly") or 0)
-        if point_per_referral < 0 or max_point_monthly < 0:
-            raise ValidationError(_("Nilai poin dan batas bulanan tidak boleh negatif."))
+        if point_per_referral <= 0 or max_point_monthly <= 0:  # Ubah dari < 0
+            raise ValidationError(_("Nilai poin dan batas bulanan harus lebih dari nol."))
 
         policy = self.getActivePolicy()
         policy.write(

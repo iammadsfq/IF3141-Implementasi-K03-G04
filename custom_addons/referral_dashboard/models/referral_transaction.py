@@ -210,13 +210,21 @@ class ReferralTransaction(models.Model):
 
         if not member:
             raise ValidationError(_("Member pembeli tidak ditemukan."))
+        
+        raw_date = values.get("transaction_date")
+        if isinstance(raw_date, str):
+            transaction_date = fields.Datetime.from_string(raw_date)
+        elif isinstance(raw_date, datetime):
+            transaction_date = raw_date
+        else:
+            transaction_date = datetime.now()
 
         transaction = self.sudo().search([("order_ref", "=", order_ref)], limit=1)
         transaction_values = {
             "order_ref": order_ref,
             "member_id": member.id,
             "amount": float(values.get("amount") or values.get("total_price") or 0),
-            "transaction_date": values.get("transaction_date") or fields.Datetime.now(),
+            "transaction_date": transaction_date,
         }
         if transaction:
             if transaction.state != "draft":
@@ -246,7 +254,9 @@ class ReferralTransaction(models.Model):
             domain.append(("transaction_date", ">=", start))
         if end:
             domain.append(("transaction_date", "<", end))
-        return self.search(domain)
+        transactions = self.search(domain)
+        return transactions.read(["order_ref", "member_id", "amount",
+                                "transaction_date", "points_awarded", "state"])
 
     @api.model
     def get_dashboard_metrics(self, period="month"):
@@ -294,14 +304,23 @@ class ReferralTransaction(models.Model):
             "topReferrers": top_referrers,
         }
 
+    def action_cancel(self):
+        for transaction in self:
+            if transaction.state == "draft":
+                transaction.write({
+                    "state": "cancelled",
+                    "note": _("Transaksi dibatalkan secara manual.")
+                })
+        return True
+
 
 class ReferralRewardLog(models.Model):
     _name = "referral.reward.log"
     _description = "Log Reward Referral"
     _order = "reward_date desc, id desc"
 
-    member_id = fields.Many2one("referral.member", string="Referrer", required=True, ondelete="cascade")
-    referred_member_id = fields.Many2one("referral.member", string="Member Referral", required=True, ondelete="cascade")
+    member_id = fields.Many2one("referral.member", string="Referrer", required=True, ondelete="restrict")
+    referred_member_id = fields.Many2one("referral.member", string="Member Referral", required=True, ondelete="restrict")
     transaction_id = fields.Many2one("referral.transaction", string="Transaksi", required=True, ondelete="cascade")
     policy_id = fields.Many2one("referral.policy", string="Kebijakan", required=True, ondelete="restrict")
     points = fields.Integer(string="Poin", required=True)

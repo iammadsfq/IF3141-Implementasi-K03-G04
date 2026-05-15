@@ -1,43 +1,68 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- referral_dashboard/views/referral_policy_views.xml -->
 <odoo>
+
+    <!-- TREE VIEW -->
     <record id="view_referral_policy_tree" model="ir.ui.view">
         <field name="name">referral.policy.tree</field>
         <field name="model">referral.policy</field>
         <field name="arch" type="xml">
-            <tree>
-                <field name="name"/>
-                <field name="point_per_referral"/>
-                <field name="max_point_monthly"/>
-                <field name="active"/>
+            <tree string="Kebijakan Referral"
+                  decoration-success="active==True"
+                  decoration-muted="active==False">
+                <field name="name" string="Nama Kebijakan"/>
+                <field name="point_per_referral" string="Poin/Referral"/>
+                <field name="max_point_monthly" string="Maks. Poin/Bulan"/>
+                <field name="active" string="Aktif" widget="toggle_button"
+                       options="{'terminology': 'active'}"/>
             </tree>
         </field>
     </record>
 
+    <!-- FORM VIEW -->
     <record id="view_referral_policy_form" model="ir.ui.view">
         <field name="name">referral.policy.form</field>
         <field name="model">referral.policy</field>
         <field name="arch" type="xml">
-            <form>
+            <form string="Kebijakan Referral">
                 <sheet>
+                    <widget name="web_ribbon" title="Tidak Aktif" bg_color="text-bg-danger"
+                            invisible="active"/>
+                    <div class="oe_title">
+                        <label for="name" string="Nama Kebijakan"/>
+                        <h1>
+                            <field name="name" placeholder="Nama kebijakan referral..."/>
+                        </h1>
+                    </div>
                     <group>
-                        <field name="name"/>
-                        <field name="active"/>
-                        <field name="point_per_referral"/>
-                        <field name="max_point_monthly"/>
+                        <group string="Konfigurasi Poin">
+                            <field name="point_per_referral"
+                                   string="Poin per Referral"
+                                   help="Poin yang diberikan referrer tiap referral valid."/>
+                            <field name="max_point_monthly"
+                                   string="Maks. Poin per Bulan"
+                                   help="Batas atas poin yang bisa diterima referrer per bulan."/>
+                        </group>
+                        <group string="Status">
+                            <field name="active" string="Kebijakan Aktif" widget="boolean_toggle"/>
+                        </group>
                     </group>
                 </sheet>
             </form>
         </field>
     </record>
 
-    <record id="action_referral_policy_client" model="ir.actions.client">
-        <field name="name">Kelola Kebijakan Referral</field>
-        <field name="tag">referral_policy_client_action</field>
+    <!-- ACTION -->
+    <record id="action_referral_policy" model="ir.actions.act_window">
+        <field name="name">Kebijakan Referral</field>
+        <field name="res_model">referral.policy</field>
+        <field name="view_mode">tree,form</field>
+        <field name="context">{'active_test': False}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Buat kebijakan referral pertama Anda.
+            </p>
+        </field>
     </record>
 
-    <menuitem id="menu_referral_policy" 
-              name="Kebijakan" 
-              parent="referral_registration.menu_referral_root" 
-              action="action_referral_policy_client" 
-              sequence="5"/>
 </odoo>

@@ -27,12 +27,17 @@ export class ReferralDashboard extends Component {
     async loadDashboard() {
         this.state.isLoading = true;
         try {
-            const data = await this.orm.call("referral.transaction", "get_dashboard_metrics", [this.state.period]);
+            const data = await this.orm.call(
+                "referral.transaction",
+                "get_dashboard_metrics",
+                [this.state.period]
+            );
             this.state.kpiData = data.kpiData;
             this.state.topReferrers = data.topReferrers;
             this.state.errorMessage = "";
         } catch (error) {
-            this.state.errorMessage = "Dashboard gagal dimuat. Pastikan modul referral sudah diperbarui.";
+            this.state.errorMessage =
+                "Dashboard gagal dimuat. Pastikan modul referral sudah diperbarui.";
         } finally {
             this.state.isLoading = false;
         }

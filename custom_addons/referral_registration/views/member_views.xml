@@ -1,47 +1,62 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- referral_registration/views/member_views.xml -->
 <odoo>
+
+    <!-- TREE VIEW -->
     <record id="view_referral_member_tree" model="ir.ui.view">
         <field name="name">referral.member.tree</field>
         <field name="model">referral.member</field>
         <field name="arch" type="xml">
-            <tree>
-                <field name="name"/>
-                <field name="phone_number"/>
-                <field name="referral_code"/>
-                <field name="referred_by_id"/>
-                <field name="referred_member_count"/>
-                <field name="point"/>
-                <field name="create_date"/>
+            <tree string="Daftar Member Referral"
+                  decoration-muted="active==False">
+                <field name="name" string="Nama Member"/>
+                <field name="phone_number" string="Nomor Telepon"/>
+                <field name="referral_code" string="Kode Referral"/>
+                <field name="point" string="Saldo Poin" sum="Total Poin"/>
+                <field name="referred_member_count" string="Jml. Referral"/>
+                <field name="referred_by_id" string="Direferensikan Oleh" optional="show"/>
+                <field name="active" column_invisible="True"/>
             </tree>
         </field>
     </record>
 
+    <!-- FORM VIEW -->
     <record id="view_referral_member_form" model="ir.ui.view">
         <field name="name">referral.member.form</field>
         <field name="model">referral.member</field>
         <field name="arch" type="xml">
-            <form>
+            <form string="Member Referral">
                 <sheet>
+                    <widget name="web_ribbon" title="Tidak Aktif" bg_color="text-bg-secondary"
+                            invisible="active"/>
+                    <div class="oe_title">
+                        <label for="name" string="Nama Member"/>
+                        <h1>
+                            <field name="name" placeholder="Nama lengkap member..."/>
+                        </h1>
+                    </div>
                     <group>
-                        <group>
-                            <field name="name"/>
-                            <field name="phone_number"/>
+                        <group string="Identitas">
+                            <field name="phone_number" string="Nomor Telepon"/>
+                            <field name="referral_code" string="Kode Referral"/>
+                            <field name="active" string="Aktif" widget="boolean_toggle"/>
                         </group>
-                        <group>
-                            <field name="referral_code" readonly="1"/>
-                            <field name="referred_by_id"/>
-                            <field name="referred_member_count"/>
-                            <field name="point"/>
+                        <group string="Informasi Referral">
+                            <field name="point" string="Saldo Poin"/>
+                            <field name="referred_by_id" string="Direferensikan Oleh"/>
+                            <field name="referred_member_count" string="Jumlah Member Direferensikan"/>
                         </group>
                     </group>
+
+                    <!-- Tab: Member yang Direferensikan -->
                     <notebook>
-                        <page string="Referred Members">
-                            <field name="referred_member_ids">
-                                <tree>
-                                    <field name="name"/>
-                                    <field name="phone_number"/>
-                                    <field name="referral_code"/>
-                                    <field name="create_date"/>
+                        <page string="Member Direferensikan" name="referred_members">
+                            <field name="referred_member_ids" readonly="1">
+                                <tree string="Member Direferensikan" create="false">
+                                    <field name="name" string="Nama"/>
+                                    <field name="phone_number" string="Telepon"/>
+                                    <field name="referral_code" string="Kode Referral"/>
+                                    <field name="point" string="Saldo Poin"/>
                                 </tree>
                             </field>
                         </page>
@@ -51,18 +66,40 @@
         </field>
     </record>
 
-    <record id="action_referral_member" model="ir.actions.act_window">
-        <field name="name">Referral Members</field>
-        <field name="res_model">referral.member</field>
-        <field name="view_mode">tree,form</field>
+    <!-- SEARCH VIEW -->
+    <record id="view_referral_member_search" model="ir.ui.view">
+        <field name="name">referral.member.search</field>
+        <field name="model">referral.member</field>
+        <field name="arch" type="xml">
+            <search string="Cari Member">
+                <field name="name" string="Nama"/>
+                <field name="phone_number" string="Nomor Telepon"/>
+                <field name="referral_code" string="Kode Referral"/>
+                <separator/>
+                <filter name="filter_active"   string="Aktif"        domain="[('active','=',True)]"/>
+                <filter name="filter_inactive" string="Tidak Aktif"  domain="[('active','=',False)]"/>
+                <filter name="filter_has_referrer" string="Punya Referrer"
+                        domain="[('referred_by_id','!=',False)]"/>
+                <group expand="0" string="Kelompokkan">
+                    <filter name="group_referrer" string="Referrer" context="{'group_by':'referred_by_id'}"/>
+                </group>
+            </search>
+        </field>
     </record>
 
-    <menuitem id="menu_referral_root" name="Referral Program" sequence="30"/>
-    <menuitem
-        id="menu_referral_member"
-        name="Members"
-        parent="menu_referral_root"
-        action="action_referral_member"
-        sequence="10"
-    />
+    <!-- ACTION -->
+    <record id="action_referral_member" model="ir.actions.act_window">
+        <field name="name">Member Referral</field>
+        <field name="res_model">referral.member</field>
+        <field name="view_mode">tree,form</field>
+        <field name="search_view_id" ref="view_referral_member_search"/>
+        <field name="context">{'search_default_filter_active': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Belum ada member terdaftar.
+            </p>
+            <p>Member baru dapat mendaftar melalui halaman publik referral.</p>
+        </field>
+    </record>
+
 </odoo>

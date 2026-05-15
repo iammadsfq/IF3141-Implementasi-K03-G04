@@ -1,13 +1,53 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <record id="action_referral_dashboard" model="ir.actions.client">
-        <field name="name">Referral Dashboard</field>
+        <field name="name">Dashboard Referral</field>
         <field name="tag">referral_dashboard_client_action</field>
     </record>
-    
-    <menuitem id="menu_referral_dashboard" 
-              name="Dashboard" 
-              parent="referral_registration.menu_referral_root" 
-              action="action_referral_dashboard" 
-              sequence="1"/>
+
+    <!-- tag HARUS = key yang di-add ke registry.category("actions") di policy.js -->
+    <record id="action_referral_policy_dashboard" model="ir.actions.client">
+        <field name="name">Kebijakan Referral</field>
+        <field name="tag">referral_policy_client_action</field>
+    </record>
+
+    <!-- Menu Root -->
+    <menuitem id="menu_referral_root"
+              name="Referral Nomar"
+              sequence="90"/>
+
+    <!-- Menu Dashboard -->
+    <menuitem id="menu_referral_dashboard"
+              name="Dashboard"
+              parent="menu_referral_root"
+              action="action_referral_dashboard"
+              sequence="10"/>
+
+    <!-- Menu Kebijakan (OWL) -->
+    <menuitem id="menu_referral_policy_owl"
+              name="Kebijakan"
+              parent="menu_referral_root"
+              action="action_referral_policy_dashboard"
+              sequence="20"/>
+
+    <!-- Menu Member -->
+    <menuitem id="menu_referral_member"
+              name="Member"
+              parent="menu_referral_root"
+              action="referral_registration.action_referral_member"
+              sequence="30"/>
+
+    <!-- Menu Transaksi -->
+    <menuitem id="menu_referral_transaction"
+              name="Transaksi"
+              parent="menu_referral_root"
+              action="referral_dashboard.action_referral_transaction"
+              sequence="40"/>
+
+    <!-- Menu Log Reward -->
+    <menuitem id="menu_referral_reward_log"
+              name="Log Reward"
+              parent="menu_referral_root"
+              action="referral_dashboard.action_referral_reward_log"
+              sequence="50"/>
 </odoo>

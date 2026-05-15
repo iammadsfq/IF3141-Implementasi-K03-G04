@@ -1,89 +1,117 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <templates xml:space="preserve">
-    
-    <t t-name="referral_dashboard.DashboardTemplate" owl="1">
-        <div class="o_referral_dashboard p-4" style="background-color: #f9f9f9; min-height: 100vh;">
-            <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4">
-                <h2 class="m-0 text-primary"><i class="fa fa-line-chart me-2"/> Dashboard Analitik Referral</h2>
-                <div class="btn-group" role="group" aria-label="Filter periode dashboard">
-                    <button t-att-class="'btn btn-sm ' + (state.period === 'week' ? 'btn-primary' : 'btn-outline-primary')" t-on-click="() => this.setPeriod('week')">Minggu Ini</button>
-                    <button t-att-class="'btn btn-sm ' + (state.period === 'month' ? 'btn-primary' : 'btn-outline-primary')" t-on-click="() => this.setPeriod('month')">Bulan Ini</button>
-                    <button t-att-class="'btn btn-sm ' + (state.period === 'year' ? 'btn-primary' : 'btn-outline-primary')" t-on-click="() => this.setPeriod('year')">Tahun Ini</button>
-                    <button t-att-class="'btn btn-sm ' + (state.period === 'all' ? 'btn-primary' : 'btn-outline-primary')" t-on-click="() => this.setPeriod('all')">Semua</button>
-                </div>
-            </div>
-
-            <div t-if="state.errorMessage" class="alert alert-danger" role="alert">
-                <t t-esc="state.errorMessage"/>
-            </div>
-
-            <div t-if="state.isLoading" class="alert alert-info" role="alert">
-                Memuat data dashboard...
-            </div>
-            
-            <div class="row mb-4" t-if="!state.isLoading">
-                <div class="col-md-4">
-                    <div class="card text-white bg-primary shadow-sm mb-3">
-                        <div class="card-body">
-                            <h6 class="card-title text-uppercase fw-bold"><i class="fa fa-users me-2"/> Total Jumlah Referral</h6>
-                            <h1 class="card-text display-5 fw-bold" t-esc="state.kpiData.totalReferrals"/>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="card text-white bg-success shadow-sm mb-3">
-                        <div class="card-body">
-                            <h6 class="card-title text-uppercase fw-bold"><i class="fa fa-money me-2"/> Total Pendapatan Referral</h6>
-                            <h1 class="card-text display-5 fw-bold" t-esc="state.kpiData.totalRevenue"/>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="card text-dark bg-warning shadow-sm mb-3">
-                        <div class="card-body">
-                            <h6 class="card-title text-uppercase fw-bold"><i class="fa fa-star me-2"/> Total Poin Dikeluarkan</h6>
-                            <h1 class="card-text display-5 fw-bold" t-esc="state.kpiData.totalPoints"/>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="card shadow-sm" t-if="!state.isLoading">
-                <div class="card-header bg-white py-3">
-                    <h4 class="m-0 font-weight-bold text-dark"><i class="fa fa-trophy text-warning me-2"/> Top Referrer</h4>
-                </div>
-                <div class="card-body p-0">
-                    <div class="table-responsive">
-                        <table class="table table-hover table-striped m-0">
-                            <thead class="table-light">
-                                <tr>
-                                    <th class="px-4 py-3">Peringkat</th>
-                                    <th class="py-3">Nama Member</th>
-                                    <th class="py-3 text-center">Jumlah Referral Sukses</th>
-                                    <th class="py-3 text-center">Total Poin Diperoleh</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr t-if="!state.topReferrers.length">
-                                    <td colspan="4" class="text-center text-muted py-4">Belum ada transaksi referral pada periode ini.</td>
-                                </tr>
-                                <t t-foreach="state.topReferrers" t-as="referrer" t-key="referrer.id">
-                                    <tr>
-                                        <td class="px-4 fw-bold">#<t t-esc="referrer_index + 1"/></td>
-                                        <td t-esc="referrer.name"/>
-                                        <td class="text-center">
-                                            <span class="badge rounded-pill bg-info text-dark fs-6" t-esc="referrer.referrals"/>
-                                        </td>
-                                        <td class="text-center fw-bold text-success" t-esc="referrer.points"/>
-                                    </tr>
-                                </t>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-            
-        </div>
-    </t>
-
+<t t-name="referral_dashboard.DashboardTemplate">
+<div class="nomar-dashboard-wrap">
+<!--  Header  -->
+<div class="nomar-dash-header">
+<div class="nomar-dash-title-group">
+<span class="nomar-dash-icon">☕</span>
+<div>
+<h1 class="nomar-dash-title">Dashboard Analitik Referral</h1>
+<p class="nomar-dash-sub">PT Nomar Kopi</p>
+</div>
+</div>
+<div class="nomar-period-bar">
+<button t-on-click="() => this.setPeriod('week')" t-att-class="state.period === 'week' ? 'nomar-period-btn active' : 'nomar-period-btn'">Minggu Ini</button>
+<button t-on-click="() => this.setPeriod('month')" t-att-class="state.period === 'month' ? 'nomar-period-btn active' : 'nomar-period-btn'">Bulan Ini</button>
+<button t-on-click="() => this.setPeriod('year')" t-att-class="state.period === 'year' ? 'nomar-period-btn active' : 'nomar-period-btn'">Tahun Ini</button>
+<button t-on-click="() => this.setPeriod('all')" t-att-class="state.period === 'all' ? 'nomar-period-btn active' : 'nomar-period-btn'">Semua</button>
+</div>
+</div>
+<!--  Loading  -->
+<t t-if="state.isLoading">
+<div class="nomar-loading">
+<div class="nomar-spinner"/>
+<span>Memuat data dashboard...</span>
+</div>
+</t>
+<!--  Error  -->
+<t t-elif="state.errorMessage">
+<div class="nomar-alert error">
+<span>⚠</span>
+<span t-esc="state.errorMessage"/>
+</div>
+</t>
+<!--  Content  -->
+<t t-else="">
+<!--  KPI Cards — full width, 3 columns  -->
+<div class="nomar-kpi-grid">
+<div class="nomar-kpi-card nomar-kpi-blue">
+<div class="nomar-kpi-icon">👥</div>
+<div class="nomar-kpi-info">
+<div class="nomar-kpi-label">Total Jumlah Referral</div>
+<div class="nomar-kpi-value">
+<t t-esc="state.kpiData.totalReferrals"/>
+</div>
+<div class="nomar-kpi-desc">Transaksi referral berhasil</div>
+</div>
+</div>
+<div class="nomar-kpi-card nomar-kpi-green">
+<div class="nomar-kpi-icon">💰</div>
+<div class="nomar-kpi-info">
+<div class="nomar-kpi-label">Total Pendapatan Referral</div>
+<div class="nomar-kpi-value">
+<t t-esc="state.kpiData.totalRevenue"/>
+</div>
+<div class="nomar-kpi-desc">Nilai transaksi dari referral</div>
+</div>
+</div>
+<div class="nomar-kpi-card nomar-kpi-gold">
+<div class="nomar-kpi-icon">⭐</div>
+<div class="nomar-kpi-info">
+<div class="nomar-kpi-label">Total Poin Dikeluarkan</div>
+<div class="nomar-kpi-value">
+<t t-esc="state.kpiData.totalPoints"/>
+</div>
+<div class="nomar-kpi-desc">Poin reward diberikan</div>
+</div>
+</div>
+</div>
+<!--  Leaderboard  -->
+<div class="nomar-leaderboard-card">
+<div class="nomar-leaderboard-header">
+<span class="nomar-lb-bar"/>
+<h2>Top Referrer</h2>
+</div>
+<t t-if="state.topReferrers.length === 0">
+<div class="nomar-empty">
+<span>📋</span>
+<p>Belum ada transaksi referral pada periode ini.</p>
+</div>
+</t>
+<t t-else="">
+<table class="nomar-lb-table">
+<thead>
+<tr>
+<th class="nomar-th-rank">Peringkat</th>
+<th>Nama Member</th>
+<th class="nomar-th-r">Jumlah Referral Sukses</th>
+<th class="nomar-th-r">Total Poin Diperoleh</th>
+</tr>
+</thead>
+<tbody>
+<t t-foreach="state.topReferrers" t-as="referral" t-key="referral.id">
+<tr>
+<td class="nomar-td-rank">
+<span t-att-class="referral_index === 0 ? 'nomar-badge gold' : referral_index === 1 ? 'nomar-badge silver' : referral_index === 2 ? 'nomar-badge bronze' : 'nomar-badge plain'">
+<t t-esc="referral_index + 1"/>
+</span>
+</td>
+<td class="nomar-td-name">
+<t t-esc="referral.name"/>
+</td>
+<td class="nomar-td-r nomar-td-bold">
+<t t-esc="referral.referrals"/>
+</td>
+<td class="nomar-td-r nomar-td-gold">
+<t t-esc="referral.points"/>
+</td>
+</tr>
+</t>
+</tbody>
+</table>
+</t>
+</div>
+</t>
+</div>
+</t>
 </templates>

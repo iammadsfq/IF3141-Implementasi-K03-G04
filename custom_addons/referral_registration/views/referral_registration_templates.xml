@@ -1,257 +1,488 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <template id="referral_registration_page" name="Referral Registration Page">
-        <t t-call="website.layout">
-            <div id="wrap" class="referral-register-page">
-                <section class="container py-5">
-                    <div class="row justify-content-center">
-                        <div class="col-lg-7 col-md-9">
-                            <div class="card referral-card border-0 shadow-sm">
-                                <div class="card-body p-4 p-md-5">
-                                    <h1 class="register-title mb-4 text-center">Registrasi Member</h1>
 
-                                    <t t-if="error_message">
-                                        <div class="alert alert-danger" role="alert">
-                                            <t t-esc="error_message"/>
-                                        </div>
-                                    </t>
+  <template id="referral_homepage_buttons"
+            name="Referral — Homepage Buttons"
+            inherit_id="website.homepage">
+    <xpath expr="//div[@id='wrap']" position="inside">
+      <section class="nm-home-referral-section">
+        <div class="nm-home-referral-inner">
 
-                                    <t t-if="success_message">
-                                        <div class="alert alert-success" role="alert">
-                                            <p class="mb-1"><strong><t t-esc="success_message"/></strong></p>
-                                            <t t-if="created_member">
-                                                <p class="mb-0">Kode referral Anda: <strong><t t-esc="created_member.referral_code"/></strong></p>
-                                            </t>
-                                        </div>
-                                    </t>
+          <!-- Branding -->
+          <div class="nm-home-badge">&#9749; Program Referral</div>
+          <h2 class="nm-home-heading">Bergabunglah dengan Program Referral Nomar Kopi</h2>
+          <p class="nm-home-sub">
+            Daftarkan diri Anda, ajak teman, dan kumpulkan poin reward setiap kali
+            referral Anda berhasil bertransaksi di Nomar Kopi.
+          </p>
 
-                                    <form action="/referral/register" method="post" class="row g-3">
-                                        <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+          <!-- CTA Buttons -->
+          <div class="nm-home-cta-group">
+            <a href="/referral/register" class="nm-home-btn nm-home-btn-primary">
+              Daftar Member Sekarang
+            </a>
+            <a href="/referral/points" class="nm-home-btn nm-home-btn-secondary">
+              Cek Saldo Poin
+            </a>
+          </div>
 
-                                        <div class="col-md-6">
-                                            <label class="form-label">Nama Lengkap</label>
-                                            <input
-                                                type="text"
-                                                name="name"
-                                                class="form-control"
-                                                required="required"
-                                                t-att-value="form_values.get('name', '')"
-                                                placeholder="Contoh: Budi Santoso"
-                                            />
-                                        </div>
+          <!-- Feature pills -->
+          <div class="nm-home-pills">
+            <span class="nm-home-pill">&#10003; Gratis &amp; Mudah</span>
+            <span class="nm-home-pill">&#10003; Poin Langsung Masuk</span>
+            <span class="nm-home-pill">&#10003; Tanpa Biaya Apapun</span>
+          </div>
 
-                                        <div class="col-md-6">
-                                            <label class="form-label">Nomor Telepon / Contact</label>
-                                            <input
-                                                type="text"
-                                                name="phone_number"
-                                                class="form-control"
-                                                required="required"
-                                                t-att-value="form_values.get('phone_number', '')"
-                                                placeholder="Contoh: 081234567890"
-                                            />
-                                        </div>
+        </div>
+      </section>
+    </xpath>
+  </template>
 
-                                        <div class="col-12">
-                                            <label class="form-label">Kode Referral (Opsional)</label>
-                                            <input
-                                                type="text"
-                                                name="referral_code"
-                                                class="form-control text-uppercase"
-                                                t-att-value="form_values.get('referral_code', '')"
-                                                placeholder="Contoh: A1B2C3"
-                                            />
-                                            <small class="text-muted">Jika diisi, sistem akan memvalidasi kode referral sebelum akun dibuat.</small>
-                                        </div>
 
-                                        <div class="col-12">
-                                            <div class="form-check">
-                                                <input
-                                                    class="form-check-input"
-                                                    type="checkbox"
-                                                    name="privacy_consent"
-                                                    id="privacy_consent"
-                                                    value="1"
-                                                    required="required"
-                                                    t-att-checked="form_values.get('privacy_consent') and 'checked'"
-                                                />
-                                                <label class="form-check-label" for="privacy_consent">
-                                                    Saya menyetujui penggunaan data pendaftaran untuk pengelolaan membership dan program referral Nomar Kopi.
-                                                </label>
-                                            </div>
-                                        </div>
+  <!--
+    ============================================================
+    REGISTRASI PAGE 
+    ============================================================
+  -->
+  <template id="referral_registration_page" name="Registrasi Member Referral">
+    <t t-call="website.layout">
+      <t t-set="head">
+        <style>
+          .nm-reg-wrap{max-width:480px;margin:48px auto 80px;padding:0 16px}
+          .nm-reg-brand{text-align:center;margin-bottom:28px}
+          .nm-reg-logo{display:inline-flex;align-items:center;justify-content:center;
+            width:64px;height:64px;border-radius:50%;
+            background:linear-gradient(145deg,#6B3A1F,#2C1506);
+            box-shadow:0 8px 24px rgba(44,21,6,.25),0 0 0 5px rgba(201,149,42,.2);
+            font-size:1.8rem;margin-bottom:12px}
+          .nm-reg-brand h1{font-size:1.5rem;font-weight:800;color:#2C1506;margin:0 0 3px}
+          .nm-reg-brand p{color:#7A5C46;font-size:.88rem;margin:0}
+          .nm-reg-card{background:#fff;border-radius:18px;border:1px solid #E8D5B7;
+            box-shadow:0 10px 36px rgba(44,21,6,.13);overflow:hidden}
+          .nm-reg-head{background:linear-gradient(135deg,#2C1506,#6B3A1F);
+            padding:20px 24px;display:flex;align-items:center;gap:12px}
+          .nm-reg-head-ico{width:38px;height:38px;background:rgba(255,255,255,.15);
+            border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:1.1rem}
+          .nm-reg-head h2{font-size:.95rem;font-weight:700;color:#fff;margin:0 0 2px}
+          .nm-reg-head p{font-size:.73rem;color:rgba(255,255,255,.7);margin:0}
+          .nm-reg-body{padding:24px}
+          .nm-alert{padding:11px 14px;border-radius:9px;font-size:.84rem;
+            margin-bottom:16px;display:flex;gap:8px;align-items:flex-start}
+          .nm-alert-ok{background:#EAF5EC;color:#2E6E3A;border-left:4px solid #2E6E3A}
+          .nm-alert-err{background:#FFF0F0;color:#8B1A1A;border-left:4px solid #8B1A1A}
+          .nm-ref-tag{display:inline-flex;align-items:center;gap:8px;padding:7px 12px;
+            background:#FDF8F0;border:1.5px dashed #C4824A;border-radius:9px;
+            font-size:.8rem;color:#6B3A1F;margin-bottom:16px}
+          .nm-ref-tag strong{font-size:.92rem;font-weight:800;letter-spacing:2px;color:#2C1506}
+          .nm-fg{margin-bottom:15px}
+          .nm-fg label{display:block;font-size:.7rem;font-weight:700;text-transform:uppercase;
+            letter-spacing:.6px;color:#7A5C46;margin-bottom:5px}
+          .nm-wrap-ico{position:relative}
+          .nm-ico-abs{position:absolute;left:11px;top:50%;transform:translateY(-50%);
+            color:#C4824A;font-size:.9rem;pointer-events:none}
+          .nm-wrap-ico .nm-inp{padding-left:34px}
+          .nm-inp{width:100%;padding:11px 13px;border:1.5px solid #E8D5B7;border-radius:9px;
+            font-size:.9rem;color:#1C0E03;background:#FDF8F0;outline:none;
+            transition:border-color .15s,box-shadow .15s}
+          .nm-inp:focus{border-color:#6B3A1F;background:#fff;box-shadow:0 0 0 3px rgba(107,58,31,.1)}
+          .nm-hint{font-size:.7rem;color:#7A5C46;margin-top:3px}
+          .nm-check{display:flex;align-items:flex-start;gap:9px;padding:10px 12px;
+            background:#FDF8F0;border:1px solid #E8D5B7;border-radius:9px;margin-bottom:16px}
+          .nm-check input{width:15px;height:15px;flex-shrink:0;margin-top:2px;
+            accent-color:#6B3A1F;cursor:pointer}
+          .nm-check label{font-size:.77rem;color:#7A5C46;line-height:1.45;cursor:pointer;margin:0}
+          .nm-divider{display:flex;align-items:center;gap:8px;margin:12px 0;
+            font-size:.68rem;color:#C4B09A;font-weight:600;text-transform:uppercase;letter-spacing:1px}
+          .nm-divider::before,.nm-divider::after{content:'';flex:1;height:1px;background:#E8D5B7}
+          .nm-btn{width:100%;padding:12px;border:none;border-radius:9px;font-size:.9rem;
+            font-weight:700;cursor:pointer;transition:all .2s;
+            display:flex;align-items:center;justify-content:center;gap:7px;text-decoration:none}
+          .nm-btn-p{background:linear-gradient(135deg,#6B3A1F,#2C1506);color:#fff;
+            box-shadow:0 4px 14px rgba(107,58,31,.28)}
+          .nm-btn-p:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(107,58,31,.35);color:#fff}
+          .nm-btn-s{background:transparent;color:#6B3A1F;border:1.5px solid #E8D5B7;margin-bottom:10px}
+          .nm-btn-s:hover{background:#F5EDD8;border-color:#C4824A;color:#2C1506}
+          .nm-success-card{text-align:center;padding:24px 0 8px}
+          .nm-success-ico{font-size:2.8rem;margin-bottom:12px}
+          .nm-success-card h3{font-size:1.1rem;font-weight:800;color:#2C1506;margin:0 0 6px}
+          .nm-success-card p{font-size:.85rem;color:#7A5C46;margin:0 0 16px}
+          .nm-code-box{background:linear-gradient(135deg,#2C1506,#6B3A1F);border-radius:12px;
+            padding:16px;margin-bottom:16px}
+          .nm-code-lbl{font-size:.68rem;font-weight:600;text-transform:uppercase;
+            letter-spacing:1px;color:rgba(255,255,255,.65);margin-bottom:4px}
+          .nm-code-val{font-size:1.7rem;font-weight:800;letter-spacing:4px;color:#F0D080}
+        </style>
+      </t>
 
-                                        <div class="col-12 d-grid d-md-flex justify-content-md-end mt-3">
-                                            <a href="/referral/points" class="btn btn-outline-secondary px-4 py-2 me-md-2 mb-2 mb-md-0">Cek Saldo Poin</a>
-                                            <button type="submit" class="btn btn-register px-4 py-2">Daftar Sekarang</button>
-                                        </div>
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-            </div>
+      <div class="nm-reg-wrap">
+        <div class="nm-reg-brand">
+          <h1>Nomar Kopi</h1>
+          <p>Program Referral Member</p>
+        </div>
 
-            <style>
-                .referral-register-page {
-                    --rr-ink: #1f2937;
-                    --rr-muted: #6b7280;
-                    --rr-accent: #d97706;
-                    --rr-accent-2: #b45309;
-                    --rr-surface: #ffffff;
-                    --rr-bg-soft: #f8fafc;
-                    background:
-                        radial-gradient(circle at 20% 15%, rgba(217, 119, 6, 0.12), transparent 35%),
-                        linear-gradient(180deg, #f8fafc 0%, #eef2f7 100%);
-                    min-height: calc(100vh - 120px);
-                }
-                .referral-register-page .register-title {
-                    color: var(--rr-ink);
-                    font-weight: 700;
-                }
-                .referral-register-page .referral-card {
-                    border-radius: 0.85rem;
-                    background: var(--rr-surface);
-                    border: 1px solid rgba(31, 41, 55, 0.08);
-                    animation: rr-slide-up 0.6s ease;
-                }
-                .referral-register-page .form-control {
-                    border-radius: 0.55rem;
-                    border-color: rgba(31, 41, 55, 0.16);
-                    padding: 0.7rem 0.85rem;
-                }
-                .referral-register-page .form-control:focus {
-                    box-shadow: 0 0 0 0.2rem rgba(217, 119, 6, 0.2);
-                    border-color: rgba(217, 119, 6, 0.55);
-                }
-                .referral-register-page .btn-register {
-                    background: linear-gradient(90deg, var(--rr-accent) 0%, var(--rr-accent-2) 100%);
-                    color: #fff;
-                    border: none;
-                    border-radius: 0.6rem;
-                    font-weight: 600;
-                    transition: transform 0.2s ease, box-shadow 0.2s ease;
-                }
-                .referral-register-page .btn-register:hover {
-                    color: #fff;
-                    transform: translateY(-1px);
-                    box-shadow: 0 8px 20px rgba(175, 0, 45, 0.25);
-                }
-                @keyframes rr-slide-up {
-                    from {
-                        opacity: 0;
-                        transform: translateY(14px);
-                    }
-                    to {
-                        opacity: 1;
-                        transform: translateY(0);
-                    }
-                }
-            </style>
+        <t t-if="error_message">
+          <div class="nm-reg-card"><div class="nm-reg-body">
+            <div class="nm-alert nm-alert-err">&#9888; <t t-esc="error_message"/></div>
+          </div></div>
         </t>
-    </template>
 
-    <template id="referral_points_page" name="Referral Points Page">
-        <t t-call="website.layout">
-            <div id="wrap" class="referral-register-page">
-                <section class="container py-5">
-                    <div class="row justify-content-center">
-                        <div class="col-lg-7 col-md-9">
-                            <div class="card referral-card border-0 shadow-sm">
-                                <div class="card-body p-4 p-md-5">
-                                    <h1 class="register-title mb-4 text-center">Saldo Poin Member</h1>
-
-                                    <t t-if="error_message">
-                                        <div class="alert alert-danger" role="alert">
-                                            <t t-esc="error_message"/>
-                                        </div>
-                                    </t>
-
-                                    <t t-if="member">
-                                        <div class="alert alert-success" role="status">
-                                            <p class="mb-1"><strong><t t-esc="member.name"/></strong></p>
-                                            <p class="mb-1">Kode referral: <strong><t t-esc="member.referral_code"/></strong></p>
-                                            <p class="mb-1">Saldo poin: <strong><t t-esc="member.point"/></strong></p>
-                                            <p class="mb-0">Jumlah member yang menggunakan kode Anda: <strong><t t-esc="member.referred_member_count"/></strong></p>
-                                        </div>
-                                    </t>
-
-                                    <form action="/referral/points" method="post" class="row g-3">
-                                        <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
-
-                                        <div class="col-md-6">
-                                            <label class="form-label">Nomor Telepon</label>
-                                            <input
-                                                type="text"
-                                                name="phone_number"
-                                                class="form-control"
-                                                required="required"
-                                                t-att-value="lookup_values.get('phone_number', '')"
-                                                placeholder="Contoh: 081234567890"
-                                            />
-                                        </div>
-
-                                        <div class="col-md-6">
-                                            <label class="form-label">Kode Referral Anda</label>
-                                            <input
-                                                type="text"
-                                                name="referral_code"
-                                                class="form-control text-uppercase"
-                                                required="required"
-                                                t-att-value="lookup_values.get('referral_code', '')"
-                                                placeholder="Contoh: A1B2C3"
-                                            />
-                                        </div>
-
-                                        <div class="col-12 d-grid d-md-flex justify-content-md-end mt-3">
-                                            <a href="/referral/register" class="btn btn-outline-secondary px-4 py-2 me-md-2 mb-2 mb-md-0">Registrasi Member</a>
-                                            <button type="submit" class="btn btn-register px-4 py-2">Lihat Saldo</button>
-                                        </div>
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </section>
+        <div class="nm-reg-card">
+          <div class="nm-reg-head">
+            <div class="nm-reg-head-ico">&#128100;</div>
+            <div>
+              <h2>Registrasi Member</h2>
+              <p>Daftar dan mulai kumpulkan poin referral</p>
             </div>
-            <style>
-                .referral-register-page {
-                    --rr-ink: #1f2937;
-                    --rr-accent: #d97706;
-                    --rr-accent-2: #b45309;
-                    --rr-surface: #ffffff;
-                    background:
-                        radial-gradient(circle at 20% 15%, rgba(217, 119, 6, 0.12), transparent 35%),
-                        linear-gradient(180deg, #f8fafc 0%, #eef2f7 100%);
-                    min-height: calc(100vh - 120px);
-                }
-                .referral-register-page .register-title {
-                    color: var(--rr-ink);
-                    font-weight: 700;
-                }
-                .referral-register-page .referral-card {
-                    border-radius: 0.85rem;
-                    background: var(--rr-surface);
-                    border: 1px solid rgba(31, 41, 55, 0.08);
-                }
-                .referral-register-page .form-control {
-                    border-radius: 0.55rem;
-                    border-color: rgba(31, 41, 55, 0.16);
-                    padding: 0.7rem 0.85rem;
-                }
-                .referral-register-page .form-control:focus {
-                    box-shadow: 0 0 0 0.2rem rgba(217, 119, 6, 0.2);
-                    border-color: rgba(217, 119, 6, 0.55);
-                }
-                .referral-register-page .btn-register {
-                    background: linear-gradient(90deg, var(--rr-accent) 0%, var(--rr-accent-2) 100%);
-                    color: #fff;
-                    border: none;
-                    border-radius: 0.6rem;
-                    font-weight: 600;
-                }
-            </style>
-        </t>
-    </template>
+          </div>
+          <div class="nm-reg-body">
+
+            <t t-if="success_message and created_member">
+              <div class="nm-alert nm-alert-ok">&#10003; <t t-esc="success_message"/></div>
+              <div class="nm-success-card">
+                <div class="nm-success-ico">&#127881;</div>
+                <h3>Selamat Datang, <t t-esc="created_member.name"/>!</h3>
+                <p>Akun referral Anda telah dibuat. Bagikan kode di bawah kepada teman-teman Anda.</p>
+                <div class="nm-code-box">
+                  <div class="nm-code-lbl">Kode Referral Anda</div>
+                  <div class="nm-code-val" t-esc="created_member.referral_code"/>
+                </div>
+                <a href="/referral/register" class="nm-btn nm-btn-s">&#8592; Daftar Akun Lain</a>
+              </div>
+            </t>
+
+            <t t-else="">
+              <t t-if="form_values.get('referral_code')">
+                <div class="nm-ref-tag">
+                  &#127381; Kode referral: <strong t-esc="form_values.get('referral_code')"/>
+                </div>
+              </t>
+              <form method="post" action="/referral/register">
+                <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                <div class="nm-fg">
+                  <label for="f_name">Nama Lengkap</label>
+                  <div class="nm-wrap-ico">
+                    <span class="nm-ico-abs">&#128100;</span>
+                    <input id="f_name" name="name" type="text" class="nm-inp"
+                           placeholder="Masukkan nama lengkap" required="required"
+                           t-att-value="form_values.get('name', '')"/>
+                  </div>
+                </div>
+                <div class="nm-fg">
+                  <label for="f_phone">Nomor Telepon</label>
+                  <div class="nm-wrap-ico">
+                    <span class="nm-ico-abs">&#128222;</span>
+                    <input id="f_phone" name="phone_number" type="tel" class="nm-inp"
+                           placeholder="08123456789" pattern="[0-9]+"
+                           title="Hanya angka" required="required"
+                           t-att-value="form_values.get('phone_number', '')"/>
+                  </div>
+                  <div class="nm-hint">Hanya angka, tanpa spasi atau tanda hubung.</div>
+                </div>
+                <div class="nm-fg">
+                  <label for="f_ref">Kode Referral <span style="font-weight:400">(Opsional)</span></label>
+                  <div class="nm-wrap-ico">
+                    <span class="nm-ico-abs">&#127381;</span>
+                    <input id="f_ref" name="referral_code" type="text" class="nm-inp"
+                           placeholder="Contoh: ABC123"
+                           t-att-value="form_values.get('referral_code', '')"
+                           style="text-transform:uppercase;letter-spacing:2px;font-weight:600"/>
+                  </div>
+                </div>
+                <div class="nm-check">
+                  <input type="checkbox" id="f_consent" name="privacy_consent" required="required"/>
+                  <label for="f_consent">Saya menyetujui penggunaan data untuk pengelolaan
+                    membership dan program referral <strong>Nomar Kopi</strong>.</label>
+                </div>
+                <div class="nm-divider">atau</div>
+                <a href="/referral/points" class="nm-btn nm-btn-s">&#128184; Cek Saldo Poin Saya</a>
+                <div class="nm-divider"></div>
+                <button type="submit" class="nm-btn nm-btn-p">&#127381; Daftar Sekarang</button>
+              </form>
+            </t>
+
+          </div>
+        </div>
+      </div>
+    </t>
+  </template>
+
+
+  <!--
+    ============================================================
+    CEK SALDO POIN PAGE
+    ============================================================
+  -->
+  <template id="referral_points_page" name="Cek Saldo Poin Referral">
+    <t t-call="website.layout">
+      <t t-set="head">
+        <style>
+          .nm-pts-wrap{max-width:460px;margin:48px auto 80px;padding:0 16px}
+          .nm-pts-brand{text-align:center;margin-bottom:28px}
+          .nm-pts-logo{display:inline-flex;align-items:center;justify-content:center;
+            width:64px;height:64px;border-radius:50%;
+            background:linear-gradient(145deg,#6B3A1F,#2C1506);
+            box-shadow:0 8px 24px rgba(44,21,6,.25),0 0 0 5px rgba(201,149,42,.2);
+            font-size:1.8rem;margin-bottom:12px}
+          .nm-pts-brand h1{font-size:1.5rem;font-weight:800;color:#2C1506;margin:0 0 3px}
+          .nm-pts-brand p{color:#7A5C46;font-size:.88rem;margin:0}
+          .nm-pts-card{background:#fff;border-radius:18px;border:1px solid #E8D5B7;
+            box-shadow:0 10px 36px rgba(44,21,6,.13);overflow:hidden}
+          .nm-pts-head{background:linear-gradient(135deg,#2C1506,#6B3A1F);
+            padding:20px 24px;display:flex;align-items:center;gap:12px}
+          .nm-pts-head-ico{width:38px;height:38px;background:rgba(255,255,255,.15);
+            border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:1.1rem}
+          .nm-pts-head h2{font-size:.95rem;font-weight:700;color:#fff;margin:0 0 2px}
+          .nm-pts-head p{font-size:.73rem;color:rgba(255,255,255,.7);margin:0}
+          .nm-pts-body{padding:24px}
+          .nm-alert-err{padding:11px 14px;border-radius:9px;font-size:.84rem;
+            margin-bottom:16px;display:flex;gap:8px;
+            background:#FFF0F0;color:#8B1A1A;border-left:4px solid #8B1A1A}
+          .nm-fg{margin-bottom:15px}
+          .nm-fg label{display:block;font-size:.7rem;font-weight:700;text-transform:uppercase;
+            letter-spacing:.6px;color:#7A5C46;margin-bottom:5px}
+          .nm-wrap-ico{position:relative}
+          .nm-ico-abs{position:absolute;left:11px;top:50%;transform:translateY(-50%);
+            color:#C4824A;font-size:.9rem;pointer-events:none}
+          .nm-wrap-ico .nm-inp{padding-left:34px}
+          .nm-inp{width:100%;padding:11px 13px;border:1.5px solid #E8D5B7;border-radius:9px;
+            font-size:.9rem;color:#1C0E03;background:#FDF8F0;outline:none;
+            transition:border-color .15s,box-shadow .15s}
+          .nm-inp:focus{border-color:#6B3A1F;background:#fff;box-shadow:0 0 0 3px rgba(107,58,31,.1)}
+          .nm-btn{width:100%;padding:12px;border:none;border-radius:9px;font-size:.9rem;
+            font-weight:700;cursor:pointer;transition:all .2s;
+            display:flex;align-items:center;justify-content:center;gap:7px;text-decoration:none}
+          .nm-btn-p{background:linear-gradient(135deg,#6B3A1F,#2C1506);color:#fff;
+            box-shadow:0 4px 14px rgba(107,58,31,.28)}
+          .nm-btn-p:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(107,58,31,.35);color:#fff}
+          .nm-btn-s{background:transparent;color:#6B3A1F;border:1.5px solid #E8D5B7;margin-top:10px}
+          .nm-btn-s:hover{background:#F5EDD8;border-color:#C4824A;color:#2C1506}
+          .nm-result{text-align:center;padding:8px 0 12px}
+          .nm-circle{display:inline-flex;flex-direction:column;align-items:center;
+            justify-content:center;width:124px;height:124px;border-radius:50%;
+            background:linear-gradient(145deg,#6B3A1F,#2C1506);
+            box-shadow:0 0 0 7px rgba(201,149,42,.15),0 10px 30px rgba(44,21,6,.18);
+            margin:0 auto 18px}
+          .nm-circle-num{font-size:2.1rem;font-weight:800;color:#F0D080;line-height:1}
+          .nm-circle-lbl{font-size:.62rem;font-weight:600;text-transform:uppercase;
+            letter-spacing:1px;color:rgba(255,255,255,.65);margin-top:2px}
+          .nm-stats-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
+          .nm-stat{background:#FDF8F0;border:1px solid #E8D5B7;border-radius:9px;
+            padding:12px;text-align:center}
+          .nm-stat-v{font-size:1.2rem;font-weight:800;color:#2C1506;display:block}
+          .nm-stat-l{font-size:.66rem;color:#7A5C46;text-transform:uppercase;
+            letter-spacing:.4px;margin-top:2px;display:block}
+          .nm-code-box{margin-top:14px;padding:13px;
+            background:linear-gradient(135deg,#2C1506,#6B3A1F);border-radius:11px;text-align:center}
+          .nm-code-lbl{font-size:.65rem;font-weight:600;text-transform:uppercase;
+            letter-spacing:1px;color:rgba(255,255,255,.65);margin-bottom:4px}
+          .nm-code-val{font-size:1.5rem;font-weight:800;letter-spacing:4px;color:#F0D080}
+        </style>
+      </t>
+
+      <div class="nm-pts-wrap">
+        <div class="nm-pts-brand">
+          <div class="nm-pts-logo">&#9749;</div>
+          <h1>Nomar Kopi</h1>
+          <p>Program Referral Member</p>
+        </div>
+
+        <div class="nm-pts-card">
+          <div class="nm-pts-head">
+            <div class="nm-pts-head-ico">
+              <t t-if="member">&#11088;</t>
+              <t t-else="">&#128184;</t>
+            </div>
+            <div>
+              <h2><t t-if="member">Saldo Poin Member</t><t t-else="">Cek Saldo Poin</t></h2>
+              <p><t t-if="member" t-esc="member.name"/><t t-else="">Masukkan data Anda</t></p>
+            </div>
+          </div>
+          <div class="nm-pts-body">
+
+            <t t-if="error_message">
+              <div class="nm-alert-err">&#9888; <t t-esc="error_message"/></div>
+            </t>
+
+            <t t-if="member">
+              <div class="nm-result">
+                <div class="nm-circle">
+                  <span class="nm-circle-num" t-esc="member.point"/>
+                  <span class="nm-circle-lbl">Poin</span>
+                </div>
+                <div class="nm-stats-row">
+                  <div class="nm-stat">
+                    <span class="nm-stat-v" t-esc="member.referred_member_count"/>
+                    <span class="nm-stat-l">Referral Sukses</span>
+                  </div>
+                  <div class="nm-stat">
+                    <span class="nm-stat-v" t-esc="member.phone_number"/>
+                    <span class="nm-stat-l">No. Telepon</span>
+                  </div>
+                </div>
+                <div class="nm-code-box">
+                  <div class="nm-code-lbl">Kode Referral Anda</div>
+                  <div class="nm-code-val" t-esc="member.referral_code"/>
+                </div>
+              </div>
+              <a href="/referral/points" class="nm-btn nm-btn-s">&#8592; Cek Akun Lain</a>
+            </t>
+
+            <t t-else="">
+              <form method="post" action="/referral/points">
+                <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                <div class="nm-fg">
+                  <label for="c_phone">Nomor Telepon</label>
+                  <div class="nm-wrap-ico">
+                    <span class="nm-ico-abs">&#128222;</span>
+                    <input id="c_phone" name="phone_number" type="tel" class="nm-inp"
+                           placeholder="08123456789" required="required"
+                           t-att-value="lookup_values.get('phone_number', '')"/>
+                  </div>
+                </div>
+                <div class="nm-fg">
+                  <label for="c_ref">Kode Referral Anda</label>
+                  <div class="nm-wrap-ico">
+                    <span class="nm-ico-abs">&#127381;</span>
+                    <input id="c_ref" name="referral_code" type="text" class="nm-inp"
+                           placeholder="ABC123" required="required"
+                           t-att-value="lookup_values.get('referral_code', '')"
+                           style="text-transform:uppercase;letter-spacing:2px;font-weight:600"/>
+                  </div>
+                </div>
+                <button type="submit" class="nm-btn nm-btn-p">&#128269; Lihat Saldo</button>
+              </form>
+              <a href="/referral/register" class="nm-btn nm-btn-s">
+                &#127381; Belum punya akun? Daftar di sini
+              </a>
+            </t>
+
+          </div>
+        </div>
+      </div>
+    </t>
+  </template>
+
+
+  <!--
+    ============================================================
+    CSS untuk homepage section 
+    ============================================================
+  -->
+  <template id="referral_homepage_assets"
+            name="Referral Homepage Assets"
+            inherit_id="website.layout">
+    <xpath expr="//head" position="inside">
+      <style>
+        .nm-home-referral-section {
+          background: linear-gradient(160deg, #2C1506 0%, #6B3A1F 60%, #8B4A27 100%);
+          padding: 72px 24px;
+          text-align: center;
+          position: relative;
+          overflow: hidden;
+        }
+        .nm-home-referral-section::before {
+          content: "";
+          position: absolute;
+          inset: 0;
+          background:
+            radial-gradient(circle at 15% 50%, rgba(201,149,42,.18) 0%, transparent 50%),
+            radial-gradient(circle at 85% 20%, rgba(201,149,42,.12) 0%, transparent 40%);
+          pointer-events: none;
+        }
+        .nm-home-referral-inner {
+          position: relative;
+          max-width: 680px;
+          margin: 0 auto;
+        }
+        .nm-home-badge {
+          display: inline-block;
+          background: rgba(240,208,128,.18);
+          border: 1px solid rgba(240,208,128,.35);
+          color: #F0D080;
+          font-size: .78rem;
+          font-weight: 700;
+          text-transform: uppercase;
+          letter-spacing: 1.2px;
+          padding: 6px 16px;
+          border-radius: 999px;
+          margin-bottom: 20px;
+        }
+        .nm-home-heading {
+          font-size: clamp(1.4rem, 3vw, 2rem);
+          font-weight: 800;
+          color: #fff;
+          line-height: 1.25;
+          margin: 0 0 14px;
+        }
+        .nm-home-sub {
+          font-size: .95rem;
+          color: rgba(255,255,255,.75);
+          line-height: 1.65;
+          max-width: 520px;
+          margin: 0 auto 32px;
+        }
+        .nm-home-cta-group {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 14px;
+          flex-wrap: wrap;
+          margin-bottom: 28px;
+        }
+        .nm-home-btn {
+          display: inline-flex;
+          align-items: center;
+          gap: 8px;
+          padding: 14px 28px;
+          border-radius: 10px;
+          font-size: .95rem;
+          font-weight: 700;
+          text-decoration: none;
+          transition: all .2s;
+          cursor: pointer;
+        }
+        .nm-home-btn-primary {
+          background: linear-gradient(135deg, #C9952A, #F0D080);
+          color: #2C1506;
+          box-shadow: 0 6px 20px rgba(201,149,42,.35);
+        }
+        .nm-home-btn-primary:hover {
+          transform: translateY(-3px);
+          box-shadow: 0 10px 28px rgba(201,149,42,.45);
+          color: #2C1506;
+          text-decoration: none;
+        }
+        .nm-home-btn-secondary {
+          background: rgba(255,255,255,.12);
+          color: #fff;
+          border: 1.5px solid rgba(255,255,255,.3);
+          backdrop-filter: blur(4px);
+        }
+        .nm-home-btn-secondary:hover {
+          background: rgba(255,255,255,.2);
+          border-color: rgba(255,255,255,.5);
+          transform: translateY(-3px);
+          color: #fff;
+          text-decoration: none;
+        }
+        .nm-home-pills {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 10px;
+          flex-wrap: wrap;
+        }
+        .nm-home-pill {
+          font-size: .78rem;
+          color: rgba(255,255,255,.65);
+          font-weight: 500;
+        }
+        @media (max-width: 480px) {
+          .nm-home-cta-group { flex-direction: column; }
+          .nm-home-btn { width: 100%; justify-content: center; }
+        }
+      </style>
+    </xpath>
+  </template>
+
 </odoo>
