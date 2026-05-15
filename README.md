@@ -1,106 +1,164 @@
-# IF3141 Sistem Informasi - Odoo Setup
+# Sistem Informasi Customer Referral Program
 
-## Introduction
+## Informasi Kelompok
+- **Nama dan Nomor Kelompok:** Kelompok 04 (G04)
+- **Nomor Kelas:** K03
 
-Odoo merupakan *Enterprise Resource Planning System* yang mampu melakukan implementasi modul modul kustom untuk menyelesaikan permasalahan proses bisnis pada suatu perusahaan.
+## Anggota Kelompok
+- 13523123 - Rhio Bimo Prakoso Sugiyanto
+- 13523135 - Ahmad Syafiq
+- 13523137 - Muhammad Aulia Azka
+- 13523148 - Andrew Tedjapratama
+- 13523152 - Muhammad Kinan Arkansyaddad
 
-Odoo memberikan opsi *on-premise solution* sehingga developer dapat melakukan implementasi kustom modul pada local environment.
+## Informasi Sistem
+- **Nama Sistem:** Sistem Informasi Customer Referral Program
+- **Nama Perusahaan:** PT. Nomar Kopi Indonesia
 
-Repository ini diperuntukkan untuk Tugas Besar IF3141 Sistem Informasi. Untuk memulai silakan melakukan fork dan membuat repository private untuk workspace setiap kelompok.
+## Deskripsi Sistem
+Sistem Informasi Customer Referral Program PT Nomar Kopi Indonesia adalah sebuah sistem yang dirancang untuk mendukung proses akuisisi pelanggan baru secara terukur, terdigitalisasi, dan terotomasi. Sistem ini dibangun sebagai transformasi dari strategi pemasaran perusahaan yang sebelumnya masih sangat bergantung pada pendekatan konvensional seperti pemasaran dari mulut ke mulut dan media sosial. Dalam implementasinya, sistem referal ini juga dirancang agar dapat terintegrasi dengan ekosistem perangkat lunak yang telah dioperasikan oleh pihak perusahaan.
 
+Secara fungsional, sistem ini memberikan fasilitas kepada pelanggan yang berstatus sebagai member aktif untuk memperoleh tautan atau kode referral unik yang dapat didistribusikan kepada calon pelanggan baru. Ketika calon pelanggan tersebut berhasil mendaftar, melakukan transaksi, dan kode referral tersebut tervalidasi, sistem akan memetakan transaksi tersebut kepada akun member pengajak. Selanjutnya, sistem akan secara otomatis memberikan poin insentif atau reward kepada pihak pengajak berdasarkan aturan dan kebijakan yang telah ditetapkan secara terpusat oleh manajemen perusahaan.
 
-## Pre-requisites
-Odoo diimplementasikan dengan Python environment dan database PostgreSQL. Repository ini sudah membungkus service aplikasi dan database melalui Docker.
+## Cara Menjalankan Sistem
 
-Sebelum memulai, pastikan dependency berikut sudah terpasang:
+### Prasyarat
 
-1. Docker Desktop
-	- Download: https://www.docker.com/products/docker-desktop/
-2. Python 3.11
-	- Digunakan untuk virtual environment (venv) pada proses development modul
+- Docker & Docker Compose
+- Git
+- Port `8069` tersedia di mesin lokal
 
-## Struktur Direktori
+### Langkah 1 — Clone Repository
 
-- `/config`
-	- Untuk menyimpan konfigurasi Odoo
-- `/custom_addons`
-	- Tempat pengerjaan modul kustom
-- `/dump`
-	- Database dump yang dapat diakses scripts untuk proses import/export
-- `/scripts`
-	- Untuk melakukan database migration
-- `docker-compose.yml`
-	- Orchestration service Odoo dan PostgreSQL
-
-## Step-by-step Installation
-
-1. Jalankan service Odoo dan PostgreSQL:
-
-	```bash
-	docker compose up -d
-	```
-
-2. Buka aplikasi pada browser:
-	- http://localhost:8069
-
-3. Login menggunakan kredensial default:
-	- Username: `admin`
-	- Password: `admin`
-
-4. Aktifkan mode developer:
-	- Masuk ke **Settings**
-	- Nyalakan **Developer Mode / Developer Access**
-
-5. Buat Python virtual environment pada workspace:
-
-	```bash
-	python3.11 -m venv .venv
-	source .venv/bin/activate
-	pip install --upgrade pip
-	pip install -r requirements.txt
-	```
-
-6. Implementasikan modul pada folder:
-	- `custom_addons/`
-
-7. Setelah implementasi modul selesai, lakukan update daftar aplikasi:
-	- Masuk ke menu **Apps**
-	- Pilih **Update Apps List**
-
-8. Jika melakukan perubahan terhadap isi modul (modifying database), jangan lupa lakukan langkah database migration dengan mengikuti step di heading bawah ini.
-
-## Database Migration
-
-Odoo menggunakan local database pada implementasinya. Maka dari itu dibutuhkan migration system yang dapat dilakukan melakukan **dump db** atau **import db**. Sebelum melakukan migration jangan lupa untuk selalu mematikan service odoo & databasenya dengan menjalankan :
-
-```bash 
-docker compose down
+```bash
+git clone <URL_REPOSITORY>
+cd <nama-folder-repository>
 ```
 
-Apabila terdapat perubahan pada database dan perubahan tersebut ingin diteruskan ke anggota tim lain, lakukan export database terlebih dahulu menggunakan script pada folder `scripts`.
+**Expected Result:** Folder project berhasil ter-clone dan berisi direktori `referral_dashboard/`, `referral_registration/`, serta `docker-compose.yml`.
+![alt text](docs/image.png)
 
-- macOS/Linux:
+***
 
-  ```bash
-  ./scripts/export_db.sh
-  ```
+### Langkah 2 — Jalankan Docker Compose
 
-- Windows:
+```bash
+docker compose up -d
+```
 
-  ```bat
-  scripts\export_db.cmd
-  ```
+Tunggu hingga container `web` dan `db` berstatus `healthy` (kurang lebih 60–120 detik).
+![alt text](docs/image-1.png)
 
-Untuk melanjutkan pengerjaan dari hasil perubahan database rekan tim, lakukan import database terlebih dahulu :
+```bash
+docker compose ps
+```
 
-- macOS/Linux:
+**Expected Result:**
+![alt text](docs/image-2.png)
 
-  ```bash
-  ./scripts/import_db.sh
-  ```
+***
 
-- Windows:
+### Langkah 3 — Akses Odoo & Instalasi Modul
 
-  ```bat
-  scripts\import_db.cmd
-  ```
+1. Buka browser → `http://localhost:8069`
+2. Login menggunakan kredensial **Administrator** (lihat bagian Kredensial)
+3. Aktifkan **Developer Mode**: buka `Settings → General Settings → scroll ke bawah → Activate Developer Mode`
+4. Buka `Apps → Update Apps List`
+5. Cari `Referral Dashboard` dan `Referral Registration`, kemudian klik **Install** untuk keduanya
+
+**Expected Result:** Menu **"Referral Nomar"** muncul di navigasi atas Odoo dengan sub-menu Dashboard, Kebijakan, Member, Transaksi, dan Log Reward.
+![alt text](docs/image-3.png)
+***
+
+### Langkah 4 — Konfigurasi Kebijakan Awal (Role: Admin)
+
+1. Buka **Referral Nomar → Kebijakan**
+2. Isi parameter:
+   - **Poin per Referral:** `100`
+   - **Max Point Monthly:** `500`
+3. Klik **Simpan**
+
+**Expected Result:** Alert hijau muncul bertuliskan *"Perubahan Tersimpan — Kebijakan referral berhasil diperbarui"*.
+![alt text](docs/image-4.png)
+
+***
+
+### Langkah 5 — Registrasi Member Baru (Publik)
+
+1. Buka tab baru (incognito/yang belum login) → `http://localhost:8069/referral/register`
+2. Isi form registrasi dengan nama, nomor telepon, dan (opsional) kode referral
+3. Centang persetujuan privasi, lalu klik **Daftar Sekarang**
+
+**Expected Result:** Halaman sukses menampilkan kode referral unik 6 karakter milik member baru.
+![alt text](docs/image-5.png)
+***
+
+### Langkah 6 — Cek Saldo Poin (Publik)
+
+1. Buka `http://localhost:8069/referral/points`
+2. Masukkan nomor telepon dan kode referral yang diperoleh saat registrasi
+3. Klik **Lihat Saldo**
+
+**Expected Result:** Tampil kartu saldo dengan jumlah poin, jumlah referral sukses, dan kode referral member.
+![alt text](image-6.png)
+***
+
+### Langkah 7 — Simulasi Sinkronisasi POS (API)
+
+Jalankan perintah `curl` berikut untuk mensimulasikan transaksi dari sistem POS:
+
+```bash
+curl -X POST http://localhost:8069/referral/pos/sync \
+  -H "Content-Type: application/json" \
+  -d '{
+    "jsonrpc": "2.0",
+    "method": "call",
+    "params": {
+      "order_ref": "POS-DEMO-001",
+      "member_phone": "<nomor_telepon_member>",
+      "amount": 85000,
+      "transaction_date": "2026-05-15 10:00:00"
+    }
+  }'
+```
+
+**Expected Result:**
+```json
+{
+  "result": {
+    "id": 1,
+    "state": "rewarded",
+    "points_awarded": 100,
+    "message": "Reward referral berhasil diberikan."
+  }
+}
+```
+
+ATAU
+
+Menggunakan Postman
+![alt text](docs/image-7.png)
+
+***
+
+## Kredensial Pengguna
+Gunakan kredensial pengujian berikut untuk menjalankan sistem dan mencoba fitur dari masing-masing peran (role) yang diimplementasikan:
+
+**Role: Staf Admin / Manajer**
+- **Email / Username:** admin
+- **Password:** admin
+- **Akses:** Memiliki kewenangan untuk masuk ke modul manajemen (backend) guna mengelola konfigurasi parameter kebijakan referral, mengakses dashboard analitik, mengelola data master member, dan meninjau log perolehan poin.
+- **Catatan:** Pada Milestone sebelumnya kami memisahkan use case Staf Admin dan Manajer, tetapi saat implementasi kami memilih untuk menyatukan saja akses kedua role tersebut karena fitur-fitur yang awalnya tidak bisa diakses oleh masing-masing role dianggap penting untuk mengambil keputusan penggunaan.
+
+**Role: Pelanggan (Member)**
+- **Email / Username:** -
+- **Password:** -
+- **Akses:** Memiliki hak untuk mengakses antarmuka portal pelanggan guna registrasi sebagai member serta memantau jumlah saldo poin terkini yang dimiliki.
+
+## Kesimpulan dan Saran
+
+**Kesimpulan**
+Sistem Informasi Customer Referral Program ini dirancang dan diimplementasikan secara komprehensif untuk menjawab permasalahan operasional mengenai rentannya retensi pelanggan pada PT Nomar Kopi Indonesia. Sistem berhasil mengubah skema akuisisi pemasaran konvensional menjadi solusi terdigitalisasi yang terukur dan efisien. Otomatisasi pengawasan rujukan dan pencatatan insentif ini mengurangi beban pengolahan data manual serta memberdayakan manajemen untuk mengambil keputusan pemasaran secara terarah.
+
+**Saran**
+Sistem harus diintegrasikan dengan ERP yang sudah ada pada perusahaan. Sebagai langkah penyempurnaan di masa yang akan datang juga, perusahaan disarankan untuk memperkuat integrasi sinkronisasi real-time dengan titik pemrosesan API pada sistem eksternal agar pencatatan log transaksi berjalan lebih mulus. Pengenalan kapabilitas notifikasi otomatis seperti integrasi email atau layanan perpesanan langsung saat pelanggan berhasil menerima insentif referal juga direkomendasikan guna meningkatkan loyalitas dari pihak member. 
